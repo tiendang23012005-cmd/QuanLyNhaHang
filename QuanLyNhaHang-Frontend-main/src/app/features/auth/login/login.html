@@ -1,0 +1,51 @@
+<div class="container-fluid bg-light min-vh-100 d-flex align-items-center justify-content-center">
+  <div class="row w-100 justify-content-center">
+    <div class="col-11 col-sm-8 col-md-6 col-lg-4">
+      
+      <div class="card shadow-lg border-0 rounded-3 auth-card">
+        <div class="card-body p-4 p-sm-5">
+          
+          <div class="text-center mb-4">
+            <h3 class="fw-bold text-warning text-uppercase m-0">QUẢN LÝ NHÀ HÀNG</h3>
+            <small class="text-muted d-block mt-1">Hệ thống vận hành & Kiểm soát định mức</small>
+          </div>
+
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-secondary small">Tài khoản đăng nhập</label>
+              <input type="text" formControlName="identifer" class="form-control border-2" placeholder="Email, SĐT hoặc Username">
+              <div *ngIf="loginForm.get('identifer')?.touched && loginForm.get('identifer')?.invalid" class="text-danger small mt-1">
+                Tài khoản không được để trống.
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-semibold text-secondary small">Mật khẩu</label>
+              <input type="password" formControlName="matKhau" class="form-control border-2" placeholder="******">
+              <div *ngIf="loginForm.get('matKhau')?.touched && loginForm.get('matKhau')?.invalid" class="text-danger small mt-1">
+                Mật khẩu phải chứa ít nhất 6 ký tự.
+              </div>
+            </div>
+
+            <div *ngIf="errorMessage" class="alert alert-danger text-center p-2 small mb-3">
+              {{ errorMessage }}
+            </div>
+
+            <button [disabled]="isLoading || loginForm.invalid" type="submit" class="btn btn-warning w-100 text-white fw-bold shadow-sm py-2">
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              {{ isLoading ? 'ĐANG XỬ LÝ...' : 'ĐĂNG NHẬP' }}
+            </button>
+
+          </form>
+
+          <div class="text-center mt-4">
+            <p class="small text-muted mb-1">Bạn chưa có tài khoản? <a href="/register" class="text-warning fw-semibold text-decoration-none">Đăng ký mới</a></p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,45 @@
+/* Hiệu ứng nổi lên cho thẻ món ăn */
+.food-card {
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  border-radius: 15px;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.food-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 20px rgba(255, 193, 7, 0.2) !important;
+  border-color: #ffc107 !important;
+}
+
+/* Hiệu ứng ảnh zoom nhẹ khi hover */
+.food-card .card-img-top {
+  transition: transform 0.5s ease;
+}
+
+.food-card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+.food-img-wrapper {
+  overflow: hidden;
+}
+
+/* Tùy chỉnh thanh cuộn cho giỏ hàng */
+.cart-scroll {
+  max-height: 450px;
+  overflow-y: auto;
+}
+
+.cart-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cart-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+.cart-scroll::-webkit-scrollbar-thumb {
+  background: #ffc107; 
+  border-radius: 10px;
+}

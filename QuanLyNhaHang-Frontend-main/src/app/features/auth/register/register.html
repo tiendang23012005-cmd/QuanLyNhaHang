@@ -1,0 +1,80 @@
+<div class="container-fluid bg-light min-vh-100 d-flex align-items-center justify-content-center py-5">
+  <div class="row w-100 justify-content-center">
+    <div class="col-11 col-sm-10 col-md-8 col-lg-5">
+      
+      <div class="card shadow-lg border-0 rounded-3 register-card">
+        <div class="card-body p-4 p-sm-5">
+          
+          <div class="text-center mb-4">
+            <h3 class="fw-bold text-warning text-uppercase m-0">ĐĂNG KÝ TÀI KHOẢN</h3>
+            <small class="text-muted d-block mt-1">Hệ thống vận hành & Kiểm soát định mức nhà hàng</small>
+          </div>
+
+          <form [formGroup]="registerForm" (ngSubmit)='onSubmit()'>
+            
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-secondary small">Họ và tên</label>
+              <input type="text" formControlName="hoTen" class="form-control border-2" placeholder="Nguyễn Văn A">
+              <div *ngIf="registerForm.get('hoTen')?.touched && registerForm.get('hoTen')?.invalid" class="text-danger small mt-1">
+                Vui lòng nhập họ và tên.
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-secondary small">Địa chỉ Email</label>
+              <input type="email" formControlName="email" class="form-control border-2" placeholder="example@gmail.com">
+              <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" class="text-danger small mt-1">
+                Email không hợp lệ (Ví dụ: abc@gmail.com).
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-secondary small">Số điện thoại</label>
+              <input type="text" formControlName="dienThoai" class="form-control border-2" placeholder="09xxxxxxxx">
+              <div *ngIf="registerForm.get('dienThoai')?.touched && registerForm.get('dienThoai')?.invalid" class="text-danger small mt-1">
+                Số điện thoại phải gồm đúng 10 chữ số.
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold text-secondary small">Mật khẩu</label>
+                <input type="password" formControlName="matKhau" class="form-control border-2" placeholder="******">
+                <div *ngIf="registerForm.get('matKhau')?.touched && registerForm.get('matKhau')?.invalid" class="text-danger small mt-1">
+                  Mật khẩu phải từ 6 ký tự trở lên
+                </div>
+              </div>
+              <div class="col-md-6 mb-4">
+                <label class="form-label fw-semibold text-secondary small">Nhập lại mật khẩu</label>
+                <input type="password" formControlName="nhapLaiMatKhau" class="form-control border-2" placeholder="******">
+                <div *ngIf="registerForm.hasError('mismatch') && registerForm.get('nhapLaiMatKhau')?.touched" class="text-danger small mt-1">
+                  Mật khẩu xác nhận không trùng khớp.
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="errorMessage" class="alert alert-danger text-center p-2 small mb-3">
+              {{ errorMessage }}
+            </div>
+
+            <div *ngIf="successMessage" class="alert alert-success text-center p-2 small mb-3">
+              {{ successMessage }}
+            </div>
+
+            <button [disabled]="isLoading || registerForm.invalid" type="submit" class="btn btn-warning w-100 text-white fw-bold shadow-sm py-2">
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              {{ isLoading ? 'ĐANG TẠO TÀI KHOẢN...' : 'ĐĂNG KÝ NGAY' }}
+            </button>
+
+          </form>
+
+          <div class="text-center mt-4">
+            <p class="small text-muted m-0">Bạn đã có tài khoản? <a href="/login" class="text-warning fw-semibold text-decoration-none">Đăng nhập ngay</a></p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
