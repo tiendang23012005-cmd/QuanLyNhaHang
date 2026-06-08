@@ -1,0 +1,54 @@
+<div class="staff-dashboard-container">
+  
+  <!-- CỘT TRÁI: SƠ ĐỒ BÀN ĂN -->
+  <div class="tables-section">
+    <h2>Sơ Đồ Bàn Ăn Khu Vực</h2>
+    
+    <div class="grid-tables">
+      <!-- Ánh xạ các trạng thái bàn sang Class CSS tương ứng -->
+      <div *ngFor="let ban of danhSachBan" 
+           class="table-card"
+           [ngClass]="{
+             'status-trong': ban.trangThaiBan === 'Trống',
+             'status-phuc-vu': ban.trangThaiBan === 'Đang phục vụ',
+             'status-da-dat': ban.trangThaiBan === 'Đã đặt'
+           }">
+        <span class="table-number">{{ ban.soBan }}</span>
+        <span class="table-status">{{ ban.trangThaiBan }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CỘT PHẢI: DANH SÁCH ĐƠN HÀNG ĐỔ VỀ -->
+  <div class="orders-section">
+    <h2>Đơn Hàng Đang Xử Lý</h2>
+    
+    <div *ngIf="isLoading" class="loading-text">Đang đồng bộ dữ liệu...</div>
+
+    <div class="orders-list" *ngIf="!isLoading">
+      <div class="order-card" *ngFor="let don of danhSachDonHang">
+        <div class="order-header">
+          <span class="order-id">#{{ don.maDonHang }} - {{ don.loaiDonHang }}</span>
+          <span class="order-time">{{ don.ngayTao | date:'HH:mm dd/MM' }}</span>
+        </div>
+        <div class="order-body">
+          <p><strong>Bàn/Khách:</strong> {{ don.tenBan }}</p>
+          <p><strong>Tổng tiền:</strong> {{ don.tongTien | currency:'VND' }}</p>
+          
+          <span class="badge" 
+                [ngClass]="{
+                  'badge-cho': don.trangThaiDon === 'Chờ xác nhận',
+                  'badge-bep': don.trangThaiDon === 'Đang chuẩn bị'
+                }">
+            {{ don.trangThaiDon }}
+          </span>
+        </div>
+      </div>
+
+      <div *ngIf="danhSachDonHang.length === 0" class="empty-state">
+        ✅ Hiện không có đơn hàng nào đang chờ xử lý.
+      </div>
+    </div>
+  </div>
+
+</div>

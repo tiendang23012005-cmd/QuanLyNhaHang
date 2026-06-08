@@ -1,19 +1,48 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/login/login';
-import { RegisterComponent } from './features/auth/register/register'; // Nhớ check đúng tên file register.ts của bạn
+import { RegisterComponent } from './features/auth/register/register'; 
 import { CustomerMenuComponent } from './features/customer/components/menu/customer-menu.component';
+import { StaffDashboardComponent } from './features/staff/dashboard/staff-dashboard.component';
+
+// THÊM DÒNG NÀY: Import authGuard mà bạn đã tạo ở Phần 2
+import { authGuard } from './core/guards/auth.guard'; // Điều chỉnh lại đường dẫn cho đúng vị trí file của bạn
+
 export const routes: Routes = [
+  // 1. CÁC ROUTE CỤ THỂ (Khai báo trước)
+  { 
+    path: 'login', 
+    component: LoginComponent 
+  },
+  { 
+    path: 'register', 
+    component: RegisterComponent 
+  },
   { 
     path: 'menu', 
     component: CustomerMenuComponent 
+    // Nếu bạn muốn KHÁCH HÀNG cũng phải đăng nhập mới được xem menu, hãy mở comment 2 dòng dưới:
+    // canActivate: [authGuard],
+    // data: { roles: ['Khách hàng', 'Admin'] }
   },
   { 
+    path: 'staff-dashboard', 
+    component: StaffDashboardComponent,
+    // BẢO VỆ ROUTE NÀY: Chỉ những ai đăng nhập với các role dưới đây mới được vào
+    canActivate: [authGuard],
+    data: { roles: ['Admin', 'Nhà bếp', 'Phục vụ'] }
+  },
+
+  // 2. ROUTE MẶC ĐỊNH (Khi người dùng gõ localhost:4200)
+  // Nếu bạn muốn vừa vào trang web là bắt Đăng nhập ngay, hãy sửa 'menu' thành 'login'
+  { 
     path: '', 
-    redirectTo: 'menu', 
+    redirectTo: 'login', 
     pathMatch: 'full' 
   },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent }, // THÊM DÒNG NÀY: Khai báo định tuyến trang đăng ký
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: '**', redirectTo: '/login' }
+
+  // 3. ROUTE CATCH-ALL (Wildcard - Xử lý đường dẫn bậy bạ)
+  { 
+    path: '**', 
+    redirectTo: 'login' 
+  }
 ];

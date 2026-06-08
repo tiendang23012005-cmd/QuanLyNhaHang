@@ -20,6 +20,8 @@ namespace QuanLyNhaHangAPI
             Console.WriteLine(connStr);
             Console.WriteLine("=================================");
 
+
+
             // 1. Cấu hình kết nối SQL Server Database
             builder.Services.AddDbContext<QuanLyNhaHangDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -69,6 +71,8 @@ namespace QuanLyNhaHangAPI
                           .AllowCredentials(); // Bắt buộc nếu bạn dùng Cookie hoặc xác thực nâng cao qua CORS
                 });
             });
+
+            builder.Services.AddScoped<INhanVienService, NhanVienService>();
 
             var app = builder.Build();
 

@@ -63,11 +63,11 @@ export class LoginComponent implements OnInit {
             alert('Đăng nhập thành công');
 
             if (res.role === 'Admin') {
-              this.router.navigate(['/admin']);
+              this.router.navigate(['/staff-dashboard']);
             } else if (res.role === 'Nhà bếp' || res.role === 'Phục vụ') {
-              this.router.navigate(['/staff']);
+              this.router.navigate(['/staff-dashboard']);
             } else {
-              this.router.navigate(['/customer']);
+              this.router.navigate(['/menu']);
             }
           } else {
             this.errorMessage = res.message;
