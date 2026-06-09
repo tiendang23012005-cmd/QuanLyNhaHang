@@ -1,72 +1,137 @@
-import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core'; // 1. THÊM dòng này
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Subscription, interval } from 'rxjs';
 import { NhanVienService } from '../../../core/services/nhan-vien.service';
-import { BanAnDto, DonHangNhanVienDto } from '../../../core/models/nhan-vien.model';
+import { BanAnDto, DonHangHienTaiDto, MonAn } from '../../../core/models/nhan-vien.model';
+import { HttpClient } from '@angular/common/http'; // Để gọi tạm API Món ăn
 
 @Component({
   selector: 'app-staff-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './staff-dashboard.component.html',
   styleUrls: ['./staff-dashboard.component.css']
 })
 export class StaffDashboardComponent implements OnInit, OnDestroy {
   danhSachBan: BanAnDto[] = [];
-  danhSachDonHang: DonHangNhanVienDto[] = [];
-  isLoading: boolean = true;
+  banDangChon: BanAnDto | null = null;
+  donHangHienTai: DonHangHienTaiDto | null = null;
   
+  // State cho Modal Thêm món
+  hienThiModalThemMon = false;
+  danhSachMonAn: MonAn[] = []; 
+  
+  isLoading: boolean = true;
   private pollingSub!: Subscription;
   private nhanVienService = inject(NhanVienService);
-  private cdr = inject(ChangeDetectorRef); // 2. INJECT ChangeDetectorRef vào đây
+  private cdr = inject(ChangeDetectorRef);
+  private http = inject(HttpClient); // Inject tạm để gọi danh sách món ăn
 
   ngOnInit(): void {
-    this.loadData();
+    this.loadDanhSachBan();
+    this.loadDanhSachMonAn(); // Tải sẵn menu để dùng cho popup thêm món
 
-    // Polling tự động làm mới mỗi 10 giây
-    this.pollingSub = interval(10000).subscribe(() => {
-      this.loadData();
+    // Cập nhật sơ đồ bàn mỗi 15 giây
+    this.pollingSub = interval(15000).subscribe(() => {
+      this.loadDanhSachBan();
     });
   }
 
-  loadData(): void {
-    console.log('--- KHỞI CHẠY LẤY DỮ LIỆU ĐỒNG BỘ ---');
-
-    // 1. Gọi API lấy sơ đồ bàn
+  loadDanhSachBan(): void {
     this.nhanVienService.getDanhSachBan().subscribe({
       next: (res) => {
-        console.log('Dữ liệu Bàn Ăn về tới Component:', res);
         if (res.isSuccess) {
           this.danhSachBan = res.data;
-          this.cdr.detectChanges(); // 3. Ép Angular vẽ lại giao diện bàn ăn
+          this.isLoading = false;
+          this.cdr.detectChanges();
         }
-      },
-      error: (err) => {
-        console.error('Lỗi cản trở tải bàn ăn:', err);
       }
     });
+  }
 
-    // 2. Gọi API lấy danh sách đơn hàng
-    this.nhanVienService.getDonHangMoi().subscribe({
+  // Tải danh sách menu từ Backend (Giả sử bạn có Endpoint GET /api/MonAn)
+  loadDanhSachMonAn(): void {
+    this.http.get<any>('https://localhost:7043/api/MonAn').subscribe({
       next: (res) => {
-        console.log('Dữ liệu Đơn Hàng về tới Component:', res);
-        if (res.isSuccess) {
-          this.danhSachDonHang = res.data;
+        // Tuỳ thuộc cấu trúc trả về của MonAnController
+        this.danhSachMonAn = res.data || res; 
+      }
+    });
+  }
+
+  // KHI NHÂN VIÊN CLICK VÀO 1 BÀN TRÊN SƠ ĐỒ
+  chonBan(ban: BanAnDto): void {
+    this.banDangChon = ban;
+    this.donHangHienTai = null;
+
+    if (ban.trangThaiBan === 'Đang phục vụ' || ban.trangThaiBan === 'Đã đặt') {
+      this.nhanVienService.getDonHangTheoBan(ban.maBan).subscribe({
+        next: (donHang) => {
+          this.donHangHienTai = donHang;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.donHangHienTai = null; // Bàn chưa có đơn hàng hoặc lỗi
+          this.cdr.detectChanges();
         }
-        this.isLoading = false; // Tắt trạng thái Loading
-        this.cdr.detectChanges(); // 4. Ép Angular vẽ lại giao diện đơn hàng
-      },
-      error: (err) => {
-        console.error('Lỗi cản trở tải đơn hàng:', err);
-        this.isLoading = false;
-        this.cdr.detectChanges();
+      });
+    }
+  }
+
+  // THAY ĐỔI SỐ LƯỢNG MÓN
+  thayDoiSoLuong(maChiTiet: number, soLuongHienTai: number, thayDoi: number): void {
+    const soLuongMoi = soLuongHienTai + thayDoi;
+    if (soLuongMoi < 0) return;
+
+    this.nhanVienService.capNhatSoLuongMon(maChiTiet, soLuongMoi).subscribe({
+      next: () => {
+        // Tải lại chi tiết đơn hàng sau khi cập nhật thành công
+        if (this.banDangChon) {
+          this.chonBan(this.banDangChon);
+        }
+      }
+    });
+  }
+
+  // XỬ LÝ THANH TOÁN
+  thanhToan(): void {
+    if (!this.donHangHienTai) return;
+    
+    if (confirm(`Xác nhận thanh toán đơn hàng cho ${this.banDangChon?.soBan}?`)) {
+      this.nhanVienService.xacNhanThanhToan(this.donHangHienTai.maDonHang).subscribe({
+        next: () => {
+          alert('Thanh toán thành công!');
+          this.donHangHienTai = null;
+          this.loadDanhSachBan(); // Làm mới để cập nhật trạng thái bàn về Trống
+        }
+      });
+    }
+  }
+
+  // MỞ / ĐÓNG MODAL THÊM MÓN
+  moModalThemMon(): void {
+    this.hienThiModalThemMon = true;
+  }
+  
+  dongModalThemMon(): void {
+    this.hienThiModalThemMon = false;
+  }
+
+  // XÁC NHẬN THÊM MÓN VÀO ĐƠN
+  themMonVaoDon(mon: MonAn): void {
+    if (!this.donHangHienTai) return;
+
+    // Mặc định thêm số lượng 1 mỗi lần bấm
+    this.nhanVienService.themMonVaoDon(this.donHangHienTai.maDonHang, mon.maMonAn, 1).subscribe({
+      next: () => {
+        this.dongModalThemMon();
+        if (this.banDangChon) this.chonBan(this.banDangChon); // Tải lại đơn hàng
       }
     });
   }
 
   ngOnDestroy(): void {
-    if (this.pollingSub) {
-      this.pollingSub.unsubscribe();
-    }
+    if (this.pollingSub) this.pollingSub.unsubscribe();
   }
 }

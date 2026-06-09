@@ -1,54 +1,115 @@
-<div class="staff-dashboard-container">
+<div class="pos-container">
   
-  <!-- CỘT TRÁI: SƠ ĐỒ BÀN ĂN -->
   <div class="tables-section">
-    <h2>Sơ Đồ Bàn Ăn Khu Vực</h2>
-    
-    <div class="grid-tables">
-      <!-- Ánh xạ các trạng thái bàn sang Class CSS tương ứng -->
+    <div class="header-filters">
+      <label><input type="radio" name="filter" checked> Tất cả</label>
+      <label><input type="radio" name="filter"> Đang sử dụng</label>
+      <label><input type="radio" name="filter"> Còn trống</label>
+    </div>
+
+    <div class="grid-tables" *ngIf="!isLoading">
       <div *ngFor="let ban of danhSachBan" 
            class="table-card"
            [ngClass]="{
              'status-trong': ban.trangThaiBan === 'Trống',
              'status-phuc-vu': ban.trangThaiBan === 'Đang phục vụ',
-             'status-da-dat': ban.trangThaiBan === 'Đã đặt'
-           }">
+             'active-selection': banDangChon?.maBan === ban.maBan
+           }"
+           (click)="chonBan(ban)">
+        <div class="icon-ban"><i class="fas fa-users"></i></div>
         <span class="table-number">{{ ban.soBan }}</span>
         <span class="table-status">{{ ban.trangThaiBan }}</span>
       </div>
     </div>
   </div>
 
-  <!-- CỘT PHẢI: DANH SÁCH ĐƠN HÀNG ĐỔ VỀ -->
   <div class="orders-section">
-    <h2>Đơn Hàng Đang Xử Lý</h2>
-    
-    <div *ngIf="isLoading" class="loading-text">Đang đồng bộ dữ liệu...</div>
+    <div class="empty-state" *ngIf="!banDangChon">
+      Vui lòng chọn một bàn để xem hóa đơn
+    </div>
 
-    <div class="orders-list" *ngIf="!isLoading">
-      <div class="order-card" *ngFor="let don of danhSachDonHang">
-        <div class="order-header">
-          <span class="order-id">#{{ don.maDonHang }} - {{ don.loaiDonHang }}</span>
-          <span class="order-time">{{ don.ngayTao | date:'HH:mm dd/MM' }}</span>
-        </div>
-        <div class="order-body">
-          <p><strong>Bàn/Khách:</strong> {{ don.tenBan }}</p>
-          <p><strong>Tổng tiền:</strong> {{ don.tongTien | currency:'VND' }}</p>
-          
-          <span class="badge" 
-                [ngClass]="{
-                  'badge-cho': don.trangThaiDon === 'Chờ xác nhận',
-                  'badge-bep': don.trangThaiDon === 'Đang chuẩn bị'
-                }">
-            {{ don.trangThaiDon }}
-          </span>
+    <div class="empty-state" *ngIf="banDangChon && !donHangHienTai">
+      <h3>{{ banDangChon.soBan }}</h3>
+      <p>Bàn đang trống. Vui lòng tạo đơn hàng mới trên thiết bị gọi món.</p>
+    </div>
+
+    <div class="bill-wrapper" *ngIf="banDangChon && donHangHienTai">
+      <div class="bill-header">
+        <h3>{{ banDangChon.soBan }} <small>Đang xử lý</small></h3>
+        <span class="ma-don">Mã hóa đơn: {{ donHangHienTai.maDonHang }}</span>
+      </div>
+
+      <div class="bill-items">
+        <div class="item-row" *ngFor="let item of donHangHienTai.chiTietDonHangs">
+          <div class="item-info">
+            <span class="item-name">{{ item.tenMonAn }}</span>
+            <span class="item-price">{{ item.giaLucDat | number }}đ</span>
+          </div>
+          <div class="item-actions">
+            <div class="qty-control">
+              <button (click)="thayDoiSoLuong(item.maChiTiet, item.soLuong, -1)">-</button>
+              <input type="text" [value]="item.soLuong" readonly>
+              <button (click)="thayDoiSoLuong(item.maChiTiet, item.soLuong, 1)">+</button>
+            </div>
+            <span class="item-total">{{ item.thanhTien | number }}đ</span>
+          </div>
         </div>
       </div>
 
-      <div *ngIf="danhSachDonHang.length === 0" class="empty-state">
-        ✅ Hiện không có đơn hàng nào đang chờ xử lý.
+      <button class="btn-them-mon" (click)="moModalThemMon()">+ Thêm món</button>
+
+      <div class="bill-summary">
+        <div class="summary-row">
+          <span>Tạm tính</span>
+          <strong>{{ donHangHienTai.tongTien | number }}đ</strong>
+        </div>
+        <div class="summary-row">
+          <span>Giảm giá</span>
+          <strong>0đ</strong>
+        </div>
+        <div class="summary-row total-row">
+          <span>Tổng cộng</span>
+          <span class="total-price">{{ donHangHienTai.tongTien | number }}đ</span>
+        </div>
+      </div>
+
+      <div class="bill-actions">
+        <button class="btn-huy">Xóa đơn</button>
+        <button class="btn-thongbao">Thông báo (F10)</button>
+        <button class="btn-in">In tạm tính</button>
+        <button class="btn-thanhtoan" (click)="thanhToan()">Thanh toán (F9)</button>
       </div>
     </div>
   </div>
+</div>
 
+<div class="modal-overlay" *ngIf="hienThiModalThemMon">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Thêm món vào đơn</h3>
+      <button class="btn-close" (click)="dongModalThemMon()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <table class="menu-table">
+        <thead>
+          <tr>
+            <th>Mã món</th>
+            <th>Tên món</th>
+            <th>Giá tiền</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let mon of danhSachMonAn">
+            <td>{{ mon.maMonAn }}</td>
+            <td>{{ mon.tenMonAn }}</td>
+            <td>{{ mon.gia | number }}đ</td>
+            <td>
+              <button class="btn-add-item" (click)="themMonVaoDon(mon)">Thêm</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>

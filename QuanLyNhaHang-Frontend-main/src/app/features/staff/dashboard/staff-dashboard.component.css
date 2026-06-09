@@ -1,115 +1,218 @@
-.staff-dashboard-container {
+.pos-container {
   display: flex;
-  gap: 20px;
-  padding: 20px;
-  height: calc(100vh - 40px); /* Tùy chỉnh theo Layout Header của bạn */
-  background-color: #f4f6f9;
-  font-family: Arial, sans-serif;
-}
-
-/* ======== PHẦN BÀN ĂN ======== */
-.tables-section {
-  flex: 7; /* Chiếm 7 phần tỷ lệ rộng */
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.tables-section h2, .orders-section h2 {
-  margin-top: 0;
+  height: 100vh;
+  background-color: #f8f9fc;
+  font-family: 'Segoe UI', Arial, sans-serif;
   color: #333;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 10px;
-  font-size: 18px;
+}
+
+/* ======== CỘT TRÁI: SƠ ĐỒ BÀN ======== */
+.tables-section {
+  flex: 6;
+  padding: 20px;
+  border-right: 1px solid #e0e0e0;
+  overflow-y: auto;
+}
+
+.header-filters {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 15px;
+  font-size: 14px;
 }
 
 .grid-tables {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 15px;
-  margin-top: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 20px;
 }
 
 .table-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* Các trạng thái bàn */
+.status-trong {
+  border-color: #f39c12; /* Màu cam nhạt giống thẻ MV */
+  color: #f39c12;
+}
+
+.status-phuc-vu {
+  border-color: #6a5af9; /* Tím đặc trưng */
+  color: #6a5af9;
+  background-color: #f0edff;
+}
+
+.active-selection {
+  box-shadow: 0 0 0 2px #6a5af9;
+  transform: scale(1.02);
+}
+
+.icon-ban { font-size: 24px; margin-bottom: 8px; }
+.table-number { display: block; font-weight: bold; font-size: 18px; margin-bottom: 5px; color: #333;}
+.table-status { font-size: 12px; color: #666;}
+
+/* ======== CỘT PHẢI: POS HÓA ĐƠN ======== */
+.orders-section {
+  flex: 4;
+  background: #fff;
   display: flex;
   flex-direction: column;
-  align-items: center;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
   justify-content: center;
-  padding: 25px 10px;
-  border-radius: 8px;
-  color: #fff;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  align-items: center;
+  height: 100%;
+  color: #888;
 }
 
-.table-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-}
-
-.table-number { font-size: 1.8rem; font-weight: bold; margin-bottom: 8px; }
-.table-status { font-size: 0.9rem; font-weight: 500; }
-
-/* Màu sắc chỉ báo trạng thái bàn */
-.status-trong { background-color: #28a745; } /* Xanh lá */
-.status-phuc-vu { background-color: #dc3545; } /* Đỏ */
-.status-da-dat { background-color: #ffc107; color: #212529; } /* Vàng */
-
-/* ======== PHẦN ĐƠN HÀNG ======== */
-.orders-section {
-  flex: 3; /* Chiếm 3 phần tỷ lệ rộng */
-  background: #fff;
+.bill-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.bill-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+
+.bill-header h3 { margin: 0; font-size: 18px; }
+.bill-header small { display: block; font-size: 12px; color: #888; font-weight: normal; margin-top: 4px; }
+.ma-don { font-weight: bold; }
+
+/* Danh sách món ăn */
+.bill-items {
+  flex: 1; /* Chiếm khoảng trống còn lại */
   overflow-y: auto;
 }
 
-.order-card {
-  border: 1px solid #e9ecef;
+.item-row {
+  background: #f8f9fc;
   border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 15px;
-  background: #fdfdfd;
-  transition: border-color 0.2s;
-}
-
-.order-card:hover { border-color: #007bff; }
-
-.order-header {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px dashed #ddd;
-  padding-bottom: 8px;
+  padding: 12px;
   margin-bottom: 10px;
 }
 
-.order-id { font-weight: bold; color: #007bff; font-size: 0.95rem; }
-.order-time { color: #6c757d; font-size: 0.85rem; }
-
-.order-body p { 
-  margin: 5px 0; 
-  font-size: 0.95rem; 
-  color: #444; 
+.item-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 
-.badge {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.8rem;
+.item-name { font-weight: 600; font-size: 14px;}
+.item-price { color: #888; font-size: 13px;}
+
+.item-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.qty-control {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.qty-control button {
+  background: none; border: none; padding: 5px 12px; cursor: pointer; color: #333;
+}
+.qty-control input {
+  width: 40px; text-align: center; border: none; border-left: 1px solid #ddd; border-right: 1px solid #ddd; font-weight: bold;
+}
+
+.item-total { font-weight: bold; color: #6a5af9; }
+
+.btn-them-mon {
+  width: 100%;
+  padding: 12px;
+  background-color: #6a5af9;
+  color: white;
+  border: none;
+  border-radius: 8px;
   font-weight: bold;
-  color: #fff;
+  cursor: pointer;
+  margin: 15px 0;
+}
+
+/* Phần tổng tiền và action */
+.bill-summary {
+  border-top: 2px dashed #eee;
+  padding-top: 15px;
+  margin-bottom: 20px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.total-row {
+  font-size: 18px;
+  font-weight: bold;
   margin-top: 10px;
 }
 
-.badge-cho { background-color: #fd7e14; } /* Cam */
-.badge-bep { background-color: #17a2b8; } /* Xanh ngọc */
+.bill-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
 
-.empty-state, .loading-text {
-  text-align: center;
-  color: #888;
-  margin-top: 30px;
-  font-size: 0.95rem;
+.bill-actions button {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-huy { background: #f1f3f5; color: #333; }
+.btn-thongbao { background: #f1f3f5; color: #333; }
+.btn-in { background: #fff; border: 1px solid #6a5af9 !important; color: #6a5af9; }
+.btn-thanhtoan { background: #6a5af9; color: #fff; }
+
+/* ======== MODAL THÊM MÓN ======== */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #fff; border-radius: 12px; width: 600px; max-width: 90%; padding: 20px;
+}
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px;
+}
+.btn-close {
+  background: none; border: none; font-size: 24px; cursor: pointer;
+}
+.menu-table {
+  width: 100%; border-collapse: collapse;
+}
+.menu-table th, .menu-table td {
+  padding: 10px; border-bottom: 1px solid #eee; text-align: left;
+}
+.btn-add-item {
+  background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;
 }
