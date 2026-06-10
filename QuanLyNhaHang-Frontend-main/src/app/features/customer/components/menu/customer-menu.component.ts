@@ -1,13 +1,13 @@
 import { Component, OnInit, inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // BẮT BUỘC THÊM DÒNG NÀY ĐỂ DÙNG FORM
+import { FormsModule } from '@angular/forms';
 import { CustomerService } from '../../services/customer.service';
 import { MonAn, CartItem, OrderRequest } from '../../models/menu.model';
 
 @Component({
   selector: 'app-customer-menu',
   standalone: true,
-  imports: [CommonModule, FormsModule], // THÊM FormsModule VÀO ĐÂY
+  imports: [CommonModule, FormsModule],
   templateUrl: './customer-menu.component.html',
   styleUrl: './customer-menu.component.css'
 })
@@ -15,18 +15,16 @@ export class CustomerMenuComponent implements OnInit {
   menuItems: MonAn[] = [];
   cartItems: CartItem[] = [];
   totalPrice: number = 0;
-  
+
   errorMessage: string = '';
   successMessage: string = '';
   isOrdering: boolean = false;
 
-  // --- CÁC BIẾN CHO GIAO DIỆN ĐẶT HÀNG ---
-  selectedOrderType: string = 'Mang về'; 
+  selectedOrderType: string = 'Mang về';
   selectedPayment: string = 'Tiền mặt';
   selectedTable: number | null = null;
   orderNote: string = '';
-  
-  // Dữ liệu bàn ăn (Theo Database của cậu: MaBan 1, 2, 3, 4)
+
   danhSachBan = [
     { maBan: 1, soBan: 'Bàn số 1' },
     { maBan: 2, soBan: 'Bàn số 2' },
@@ -42,7 +40,7 @@ export class CustomerMenuComponent implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       this.loadMenu();
     }
-    
+
     this.customerService.cart$.subscribe(items => {
       this.cartItems = items;
       this.totalPrice = this.customerService.getCartTotal();
@@ -52,14 +50,8 @@ export class CustomerMenuComponent implements OnInit {
 
   loadMenu() {
     this.customerService.getMenu().subscribe({
-      next: (data) => {
-        this.menuItems = data;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.errorMessage = 'Không thể tải thực đơn. Vui lòng kiểm tra kết nối mạng!';
-        this.cdr.detectChanges(); 
-      }
+      next: (data) => { this.menuItems = data; this.cdr.detectChanges(); },
+      error: () => { this.errorMessage = 'Không thể tải thực đơn!'; this.cdr.detectChanges(); }
     });
   }
 
@@ -71,12 +63,11 @@ export class CustomerMenuComponent implements OnInit {
     this.customerService.removeFromCart(maMonAn);
   }
 
-  onCheckout() {
+  async onCheckout() {
     if (this.cartItems.length === 0) return;
 
-    // Validate: Bắt buộc chọn bàn nếu ăn Tại quán
     if (this.selectedOrderType === 'Tại quán' && !this.selectedTable) {
-      this.errorMessage = 'Vui lòng chọn số bàn nếu bạn ăn tại quán!';
+      this.errorMessage = 'Vui lòng chọn số bàn!';
       return;
     }
 
@@ -84,7 +75,6 @@ export class CustomerMenuComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    // Gom toàn bộ dữ liệu thực tế từ Form
     const orderPayload: OrderRequest = {
       loaiDonHang: this.selectedOrderType,
       phuongThucThanhToan: this.selectedPayment,
@@ -97,19 +87,35 @@ export class CustomerMenuComponent implements OnInit {
       }))
     };
 
-    this.customerService.placeOrder(orderPayload).subscribe({
-      next: (res) => {
-        this.successMessage = 'Đặt món thành công! Đơn hàng đã được chuyển xuống bếp.';
+    try {
+      if (this.selectedPayment === 'VNPay') {
+        await this.processVNPayPayment(orderPayload);
+      } else {
+        // Thanh toán tiền mặt / chuyển khoản
+        const res = await this.customerService.placeOrder(orderPayload).toPromise();
+        this.successMessage = 'Đặt món thành công!';
         this.customerService.clearCart();
-        this.orderNote = ''; // Xóa ghi chú sau khi đặt xong
-        this.isOrdering = false;
-        this.cdr.detectChanges(); 
-      },
-      error: (err) => {
-        this.errorMessage = err.error?.message || 'Lỗi đặt hàng. Vui lòng thử lại!';
-        this.isOrdering = false;
-        this.cdr.detectChanges(); 
+        this.orderNote = '';
       }
-    });
+    } catch (err: any) {
+      this.errorMessage = err.error?.message || 'Lỗi đặt hàng. Vui lòng thử lại!';
+    } finally {
+      this.isOrdering = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  private async processVNPayPayment(orderPayload: OrderRequest) {
+    try {
+      const response = await this.customerService.createVNPayPayment(orderPayload).toPromise();
+      
+      if (response?.isSuccess && response.paymentUrl) {
+        window.location.href = response.paymentUrl;   // Chuyển sang trang VNPay
+      } else {
+        this.errorMessage = response?.message || 'Không thể tạo link thanh toán VNPay';
+      }
+    } catch (err: any) {
+      this.errorMessage = 'Lỗi kết nối VNPay: ' + (err.error?.message || err.message);
+    }
   }
 }

@@ -137,20 +137,6 @@ export class StaffDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  // HÀM ĐĂNG XUẤT MỚI: Xóa token và đá người dùng ra màn hình login
-  dangXuat(): void {
-    if (confirm('Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?')) {
-      localStorage.removeItem('token'); // Xóa Token lưu trữ danh tính
-      // Hãy sửa chuỗi '/login' thành đúng Router path dẫn tới màn hình Đăng nhập của bạn
-      this.router.navigate(['/login']); 
-    }
-  }
-
-  // TẠM THỜI ĐỂ ĐÓ LÀM SAU
-  xemLichSuHoaDon(): void {
-    alert('Tính năng Lịch sử hóa đơn đang được phát triển, tạm thời chưa khả dụng!');
-  }
-
   // 1. Click nút "In tạm tính"
   inTamTinh(): void {
     if (!this.donHangHienTai) return;

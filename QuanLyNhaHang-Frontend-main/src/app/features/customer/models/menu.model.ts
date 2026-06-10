@@ -18,7 +18,11 @@ export interface CartItem {
 export interface OrderRequest {
   loaiDonHang: string;
   phuongThucThanhToan: string;
-  maBan?: number | null;  // Thêm
-  ghiChu?: string;        // Thêm
-  chiTietDonHang: any[];
+  maBan?: number | null;
+  ghiChu?: string;
+  chiTietDonHang: {
+    maMonAn: number;
+    soLuong: number;
+    giaLucDat: number;
+  }[];
 }

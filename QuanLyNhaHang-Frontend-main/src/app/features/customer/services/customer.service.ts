@@ -47,6 +47,10 @@ export class CustomerService {
     return this.cartSubject.value.reduce((total, item) => total + (item.monAn.gia * item.soLuong), 0);
   }
 
+  createVNPayPayment(order: OrderRequest) {
+    return this.http.post<any>(`${this.apiUrl}/payment/create`, order);
+  }
+  
   // 5. Gửi đơn hàng lên Backend (Truyền cho Tiến xử lý tiếp)
   placeOrder(order: OrderRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/DonHang/create`, order);

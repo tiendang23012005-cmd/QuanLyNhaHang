@@ -1,0 +1,23 @@
+<nav class="navbar navbar-dark bg-dark px-4 py-3 shadow-sm">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
+    <a class="navbar-brand fw-bold fs-4" href="/">
+      QuanLyNhaHang
+    </a>
+
+    <div class="d-flex align-items-center gap-3">
+      @if (isLoggedIn) {
+        <span class="text-light me-3">
+          Xin chào, <strong>{{ fullName }}</strong>
+        </span>
+        <button class="btn btn-outline-light btn-sm d-flex align-items-center gap-2" (click)="logout()">
+          <i class="bi bi-box-arrow-right"></i>
+          Đăng xuất
+        </button>
+      } @else {
+        <a routerLink="/login" class="btn btn-outline-light btn-sm">
+          Đăng nhập
+        </a>
+      }
+    </div>
+  </div>
+</nav>
