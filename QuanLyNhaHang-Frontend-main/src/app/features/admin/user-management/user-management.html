@@ -1,0 +1,119 @@
+<h2>Quản lý nhân viên</h2>
+
+<form class="form-container" #employeeForm="ngForm" (ngSubmit)="AddEmployee(employeeForm)" novalidate>
+
+  <div class="input-group">
+    <input
+      type="text"
+      name="hoTen"
+      placeholder="Họ tên nhân viên"
+      required
+      [(ngModel)]="NewUser.hoTen">
+    <div class="error" style="color: red;" *ngIf="hoTen?.touched && hoTen?.errors?.['required']">
+      Họ tên nhân viên là bắt buộc.
+    </div>
+  </div>
+
+  <div class="input-group">
+    <input
+      type="email"
+      name="email"
+      placeholder="Địa chỉ Email"
+      required
+      email
+      [(ngModel)]="NewUser.email">
+    <div class="error" style="color: red;" *ngIf="email?.touched && email?.invalid">
+      <div *ngIf="email?.errors?.['required']">Địa chỉ email là bắt buộc.</div>
+      <div *ngIf="email?.errors?.['email']">Định dạng email không hợp lệ (Ví dụ: NguyenVanA@gmail.com).</div>
+    </div>
+  </div>
+
+  <div class="input-group">
+    <input
+      type="text"
+      name="dienThoai"
+      placeholder="Số điện thoại (10 - 11 số)"
+      required
+      pattern="[0-9]{10,11}"
+      [(ngModel)]="NewUser.dienThoai">
+    <div class="error" style="color: red;" *ngIf="dienThoai?.touched && dienThoai?.invalid">
+      <div *ngIf="dienThoai?.errors?.['required']">Số điện thoại là bắt buộc.</div>
+      <div *ngIf="dienThoai?.errors?.['pattern']">Số điện thoại phải là số và có độ dài từ 10 đến 11 chữ số.</div>
+    </div>
+  </div>
+
+  <div class="input-group">
+    <input
+      type="password"
+      name="matKhau"
+      placeholder="Mật khẩu (Ít nhất 6 ký tự)"
+      required
+      minlength="6"
+      [(ngModel)]="NewUser.matKhau">
+    <div class="error" style="color: red;" *ngIf="matKhau?.touched && matKhau?.invalid">
+      <div *ngIf="matKhau?.errors?.['required']">Mật khẩu là bắt buộc.</div>
+      <div *ngIf="matKhau?.errors?.['minlength']">Mật khẩu bảo mật phải có ít nhất 6 ký tự.</div>
+    </div>
+  </div>
+
+  <div class="input-group">
+    <select name="maVaiTro" required [(ngModel)]="NewUser.maVaiTro">
+      <option [value]="2">Phục vụ</option>
+      <option [value]="3">Bếp</option>
+      <option [value]="4">Thu ngân</option>
+    </select>
+    <div class="error" style="color: red;" *ngIf="maVaiTro?.touched && maVaiTro?.errors?.['required']">
+      Vui lòng lựa chọn một vai trò.
+    </div>
+  </div>
+
+  <button type="submit" [disabled]="employeeForm.invalid || isLoading">
+    {{ isLoading ? 'Đang xử lý...' : 'Thêm nhân viên' }}
+  </button>
+
+</form>
+
+<hr>
+
+<table>
+  <thead>
+    <tr>
+      <th>Họ tên</th>
+      <th>Email</th>
+      <th>Điện thoại</th>
+      <th>Vai trò</th>
+      <th>Trạng thái</th>
+      <th>Thao tác</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let user of Users">
+      <td>{{ user.hoTen }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.dienThoai }}</td>
+      
+      <td>
+        <select [(ngModel)]="user.maVaiTro" (change)="ChangeRole(user)">
+          <option [value]="2">Phục vụ</option>
+          <option [value]="3">Bếp</option>
+          <option [value]="4">Thu ngân</option>
+        </select>
+      </td>
+
+      <td>
+        {{ user.trangThaiHoatDong ? 'Hoạt động' : 'Đã khóa' }}
+      </td>
+
+      <td>
+        <button 
+          type="button"
+          (click)="ToggleStatus(user)" 
+          [style.background-color]="user.trangThaiHoatDong ? '#28a745' : '#dc3545'"
+          style="color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; transition: 0.2s;">
+          {{ user.trangThaiHoatDong ? 'Đang Hoạt động' : 'Đang Khóa' }}
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>

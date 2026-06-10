@@ -23,7 +23,7 @@ export const authGuard: CanActivateFn = (route, state) => {
     
     // Bẻ hướng họ về đúng vị trí của họ
     if (currentUser.role === 'Admin') {
-      router.navigate(['/admin']);
+      router.navigate(['/user-management']);
     } else if (currentUser.role === 'Nhà bếp' || currentUser.role === 'Phục vụ') {
       router.navigate(['/staff-dashboard']);
     } else {

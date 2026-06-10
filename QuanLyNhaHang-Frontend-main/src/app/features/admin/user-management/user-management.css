@@ -1,0 +1,105 @@
+body {
+    background: #f4f6f9;
+    font-family: Arial, sans-serif;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 25px;
+}
+
+.form-container {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+
+    margin-bottom: 30px;
+}
+
+input,
+select {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 8px rgba(59,130,246,0.3);
+}
+
+button {
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: bold;
+}
+
+.form-container button {
+    background: #2563eb;
+    color: white;
+}
+
+.form-container button:hover {
+    background: #1d4ed8;
+}
+
+table {
+    width: 100%;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    border-collapse: collapse;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+thead {
+    background: #2563eb;
+    color: white;
+}
+
+th {
+    padding: 15px;
+    text-align: center;
+}
+
+td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+tbody tr:hover {
+    background: #f8fafc;
+}
+
+td button {
+    background: #ef4444;
+    color: white;
+}
+
+td button:hover {
+    background: #dc2626;
+}
+
+.status-active {
+    color: green;
+    font-weight: bold;
+}
+
+.status-lock {
+    color: red;
+    font-weight: bold;
+}

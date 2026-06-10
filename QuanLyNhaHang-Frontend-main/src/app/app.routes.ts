@@ -3,6 +3,7 @@ import { LoginComponent } from './features/auth/login/login';
 import { RegisterComponent } from './features/auth/register/register'; 
 import { CustomerMenuComponent } from './features/customer/components/menu/customer-menu.component';
 import { StaffDashboardComponent } from './features/staff/dashboard/staff-dashboard.component';
+import { UserManagement } from './features/admin/user-management/user-management';
 
 // THÊM DÒNG NÀY: Import authGuard mà bạn đã tạo ở Phần 2
 import { authGuard } from './core/guards/auth.guard'; // Điều chỉnh lại đường dẫn cho đúng vị trí file của bạn
@@ -29,7 +30,15 @@ export const routes: Routes = [
     component: StaffDashboardComponent,
     // BẢO VỆ ROUTE NÀY: Chỉ những ai đăng nhập với các role dưới đây mới được vào
     canActivate: [authGuard],
-    data: { roles: ['Admin', 'Nhà bếp', 'Phục vụ'] }
+    data: { roles: ['Phục vụ', 'Nhà bếp'] }
+  },
+
+    { 
+    path: 'user-management', 
+    component: UserManagement,
+    // BẢO VỆ ROUTE NÀY: Chỉ những ai đăng nhập với các role dưới đây mới được vào
+    canActivate: [authGuard],
+    data: { roles: ['Admin'] }
   },
 
   // 2. ROUTE MẶC ĐỊNH (Khi người dùng gõ localhost:4200)

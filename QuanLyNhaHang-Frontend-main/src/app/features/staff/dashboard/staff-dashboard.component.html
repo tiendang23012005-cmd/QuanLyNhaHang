@@ -1,14 +1,33 @@
-<div class="pos-container">
-  
+<header class="restaurant-header">
+  <div class="logo-area">
+    <i class="fas fa-utensils"></i>
+    <h1>Nhà hàng đặc sản Quy Nhơn</h1>
+  </div>
+  <div class="user-profile">
+    <span><i class="fas fa-user-circle"></i> Nhân viên phục vụ</span>
+  </div>
+</header>
+
+<div class="dashboard-container">
   <div class="tables-section">
-    <div class="header-filters">
-      <label><input type="radio" name="filter" checked> Tất cả</label>
-      <label><input type="radio" name="filter"> Đang sử dụng</label>
-      <label><input type="radio" name="filter"> Còn trống</label>
+    <div class="section-title">
+      <h2>Sơ đồ phục vụ POS</h2>
     </div>
 
+    <div class="takeaway-box">
+      <div class="table-card status-takeaway" 
+           [ngClass]="{'active-selection': banDangChon?.maBan === 0}"
+           (click)="chonMangVe()">
+        <div class="icon-ban"><i class="fas fa-shopping-bag"></i></div>
+        <span class="table-number">MANG VỀ</span>
+        <span class="table-status">Bấm xử lý nhanh</span>
+      </div>
+    </div>
+
+    <div class="loading-spinner" *ngIf="isLoading">Đang tải sơ đồ...</div>
+
     <div class="grid-tables" *ngIf="!isLoading">
-      <div *ngFor="let ban of danhSachBan" 
+      <div *ngFor="let ban of danhSachBan"
            class="table-card"
            [ngClass]="{
              'status-trong': ban.trangThaiBan === 'Trống',
@@ -25,38 +44,44 @@
 
   <div class="orders-section">
     <div class="empty-state" *ngIf="!banDangChon">
-      Vui lòng chọn một bàn để xem hóa đơn
+      <i class="fas fa-arrow-left"></i>
+      <p>Vui lòng chọn một bàn hoặc ô "Mang Về" để kiểm tra hóa đơn</p>
     </div>
 
     <div class="empty-state" *ngIf="banDangChon && !donHangHienTai">
       <h3>{{ banDangChon.soBan }}</h3>
-      <p>Bàn đang trống. Vui lòng tạo đơn hàng mới trên thiết bị gọi món.</p>
+      <p class="txt-warning">Hiện tại chưa có hóa đơn nào.</p>
+      <button class="btn-primary-action" (click)="moModalThemMon()">
+        <i class="fas fa-plus"></i> Tạo hóa đơn & Gọi món ngay
+      </button>
     </div>
 
     <div class="bill-wrapper" *ngIf="banDangChon && donHangHienTai">
       <div class="bill-header">
-        <h3>{{ banDangChon.soBan }} <small>Đang xử lý</small></h3>
-        <span class="ma-don">Mã hóa đơn: {{ donHangHienTai.maDonHang }}</span>
+        <h3>{{ banDangChon.soBan }} <small class="badge-process">Đang phục vụ</small></h3>
+        <span class="ma-don">Mã HĐ: #{{ donHangHienTai.maDonHang }}</span>
       </div>
 
-      <div class="bill-items">
-        <div class="item-row" *ngFor="let item of donHangHienTai.chiTietDonHangs">
+      <button class="btn-them-mon" (click)="moModalThemMon()">
+        <i class="fas fa-cart-plus"></i> Thêm món ăn vào đơn
+      </button>
+
+      <div class="bill-items-list">
+        <div class="bill-item" *ngFor="let item of donHangHienTai.chiTietDonHangs">
           <div class="item-info">
             <span class="item-name">{{ item.tenMonAn }}</span>
             <span class="item-price">{{ item.giaLucDat | number }}đ</span>
           </div>
-          <div class="item-actions">
-            <div class="qty-control">
-              <button (click)="thayDoiSoLuong(item.maChiTiet, item.soLuong, -1)">-</button>
-              <input type="text" [value]="item.soLuong" readonly>
-              <button (click)="thayDoiSoLuong(item.maChiTiet, item.soLuong, 1)">+</button>
-            </div>
-            <span class="item-total">{{ item.thanhTien | number }}đ</span>
+          <div class="item-qty-control">
+            <button class="qty-btn" (click)="thayDoiSoLuong(item.maChiTiet, item.soLuong, -1)">-</button>
+            <input type="text" class="qty-input" [value]="item.soLuong" readonly />
+            <button class="qty-btn" (click)="thayDoiSoLuong(item.maChiTiet, item.soLuong, 1)">+</button>
+          </div>
+          <div class="item-total">
+            {{ item.thanhTien | number }}đ
           </div>
         </div>
       </div>
-
-      <button class="btn-them-mon" (click)="moModalThemMon()">+ Thêm món</button>
 
       <div class="bill-summary">
         <div class="summary-row">
@@ -64,20 +89,18 @@
           <strong>{{ donHangHienTai.tongTien | number }}đ</strong>
         </div>
         <div class="summary-row">
-          <span>Giảm giá</span>
+          <span>Khấu trừ giảm giá</span>
           <strong>0đ</strong>
         </div>
         <div class="summary-row total-row">
-          <span>Tổng cộng</span>
+          <span>TỔNG CỘNG THANH TOÁN</span>
           <span class="total-price">{{ donHangHienTai.tongTien | number }}đ</span>
         </div>
       </div>
 
       <div class="bill-actions">
-        <button class="btn-huy">Xóa đơn</button>
-        <button class="btn-thongbao">Thông báo (F10)</button>
-        <button class="btn-in">In tạm tính</button>
-        <button class="btn-thanhtoan" (click)="thanhToan()">Thanh toán (F9)</button>
+        <button class="btn-in" (click)="inTamTinh()">In tạm tính</button>
+        <button class="btn-thanhtoan" (click)="yeuCauThanhToan()">Thanh toán (F9)</button>
       </div>
     </div>
   </div>
@@ -86,7 +109,7 @@
 <div class="modal-overlay" *ngIf="hienThiModalThemMon">
   <div class="modal-content">
     <div class="modal-header">
-      <h3>Thêm món vào đơn</h3>
+      <h3>Danh sách thực đơn nhà hàng</h3>
       <button class="btn-close" (click)="dongModalThemMon()">&times;</button>
     </div>
     <div class="modal-body">
@@ -94,22 +117,140 @@
         <thead>
           <tr>
             <th>Mã món</th>
-            <th>Tên món</th>
-            <th>Giá tiền</th>
+            <th>Tên món ăn đặc sản</th>
+            <th>Đơn giá</th>
             <th>Thao tác</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let mon of danhSachMonAn">
             <td>{{ mon.maMonAn }}</td>
-            <td>{{ mon.tenMonAn }}</td>
-            <td>{{ mon.gia | number }}đ</td>
+            <td><strong>{{ mon.tenMonAn }}</strong></td>
+            <td class="txt-price">{{ mon.gia | number }}đ</td>
             <td>
-              <button class="btn-add-item" (click)="themMonVaoDon(mon)">Thêm</button>
+              <button class="btn-add-item" (click)="themMonVaoDon(mon)">
+                <i class="fas fa-plus-circle"></i> Thêm vào đơn
+              </button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+  </div>
+</div>
+
+<div class="modal-overlay no-print" *ngIf="hienThiModalXacNhanThanhToan">
+  <div class="modal-confirm-content">
+    <div class="modal-confirm-header danger">
+      <i class="fas fa-exclamation-circle"></i> XÁC NHẬN THANH TOÁN
+    </div>
+    <div class="modal-confirm-body">
+      Bạn có chắc chắn muốn thanh toán đơn hàng cho <strong>{{ banDangChon?.soBan }}</strong>?<br>
+      Hành động này sẽ chốt doanh thu và đưa bàn này về trạng thái <strong>Trống</strong>.
+    </div>
+    <div class="modal-confirm-footer">
+      <button class="btn-cancel" (click)="dongModalXacNhanThanhToan()">Hủy bỏ</button>
+      <button class="btn-confirm" (click)="thucHienThanhToanAPI()">Đồng ý thanh toán</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay no-print" *ngIf="hienThiModalHoiInSauThanhToan">
+  <div class="modal-confirm-content">
+    <div class="modal-confirm-header success">
+      <i class="fas fa-check-circle"></i> THANH TOÁN THÀNH CÔNG!
+    </div>
+    <div class="modal-confirm-body text-center">
+      Đơn hàng đã được lưu xử lý thành công.<br>
+      Bạn có muốn kết xuất dữ liệu và <strong>In hóa đơn thanh toán</strong> ngay không?
+    </div>
+    <div class="modal-confirm-footer justify-center">
+      <button class="btn-no-print" (click)="boQuaInHoaDon()">
+        <i class="fas fa-times"></i> Không cần in
+      </button>
+      <button class="btn-yes-print" (click)="dongYInHoaDonRaGiay()">
+        <i class="fas fa-print"></i> Có, In hóa đơn
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay invoice-print-modal" *ngIf="hienThiModalIn" (click)="dongModalInView()">
+  <div class="modal-content-invoice" (click)="$event.stopPropagation()">
+    
+    <div class="invoice-pos-paper">
+      <div class="invoice-header">
+        <h3 class="restaurant-name">NHÀ HÀNG ĐẶC SẢN QUY NHƠN</h3>
+        <p class="restaurant-info">ĐC: 123 Nguyễn Huệ, TP. Quy Nhơn</p>
+        <p class="restaurant-info">ĐT: 0905.XXX.XXX</p>
+        <div class="dashed-line"></div>
+        
+        <h2 class="invoice-title">
+          {{ loaiIn === 'tam-tinh' ? 'PHIẾU TẠM TÍNH' : 'HÓA ĐƠN THANH TOÁN' }}
+        </h2>
+        <p class="invoice-meta">Mã HĐ: #{{ donHangHienTai?.maDonHang }}</p>
+        <p class="invoice-meta">Thời gian: {{ ngayInHienTai | date:'dd/MM/yyyy HH:mm' }}</p>
+      </div>
+
+      <div class="invoice-info">
+        <p><strong>Vị trí:</strong> {{ donHangHienTai?.soBan ? 'Bàn ' + donHangHienTai?.soBan : 'Mang về' }}</p>
+        <p><strong>Thu ngân:</strong> Nhân viên phục vụ</p>
+      </div>
+      
+      <div class="dashed-line"></div>
+
+      <table class="invoice-table">
+        <thead>
+          <tr>
+            <th align="left">Món ăn</th>
+            <th align="center">SL</th>
+            <th align="right">Đơn giá</th>
+            <th align="right">T.Tiền</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of donHangHienTai?.chiTietDonHangs">
+            <td align="left" class="food-name">{{ item.tenMonAn }}</td>
+            <td align="center">{{ item.soLuong }}</td>
+            <td align="right">{{ item.giaLucDat | number }}</td>
+            <td align="right" class="font-bold">{{ item.thanhTien | number }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="dashed-line"></div>
+
+      <div class="invoice-summary">
+        <div class="summary-line">
+          <span>Tổng tiền món:</span>
+          <span>{{ donHangHienTai?.tongTien | number }}đ</span>
+        </div>
+        <div class="summary-line">
+          <span>Giảm giá / Ưu đãi:</span>
+          <span>0đ</span>
+        </div>
+        <div class="dashed-line"></div>
+        <div class="summary-line total-pay">
+          <span>THÀNH TIỀN:</span>
+          <span>{{ donHangHienTai?.tongTien | number }}đ</span>
+        </div>
+      </div>
+
+      <div class="dashed-line"></div>
+      <div class="invoice-footer">
+        <p class="thank-you">CẢM ƠN QUÝ KHÁCH & HẸN GẶP LẠI!</p>
+        <p class="powered-by">Phần mềm quản lý nhà hàng v1.0</p>
+      </div>
+    </div>
+
+    <div class="modal-footer-tools no-print">
+      <button class="btn-close-view" (click)="dongModalInView()">
+        <i class="fas fa-arrow-left"></i> Quay lại
+      </button>
+      <button class="btn-trigger-print" (click)="kichHoatLenhIn()">
+        <i class="fas fa-print"></i> Bấm để in ra giấy
+      </button>
+    </div>
+
   </div>
 </div>

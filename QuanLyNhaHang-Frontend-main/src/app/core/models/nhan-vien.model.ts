@@ -1,4 +1,3 @@
-// Các Model cũ của bạn giữ nguyên
 export interface BanAnDto {
   maBan: number;
   soBan: string;
@@ -8,11 +7,11 @@ export interface BanAnDto {
 export interface DonHangNhanVienDto {
   maDonHang: number;
   maBan?: number;
-  tenBan: string;
-  loaiDonHang: string;
-  ngayTao: string; 
-  tongTien: number;
-  trangThaiDon: string;
+  tenBan?: string;
+  loaiDonHang?: string;
+  ngayTao?: string;
+  tongTien?: number;
+  trangThaiDon?: string;
 }
 
 export interface NhanVienApiResponse<T> {
@@ -20,10 +19,6 @@ export interface NhanVienApiResponse<T> {
   message: string;
   data: T;
 }
-
-// ==========================================
-// THÊM CÁC MODEL MỚI CHO GIAO DIỆN POS
-// ==========================================
 
 export interface ChiTietDonHangDto {
   maChiTiet: number;
@@ -46,7 +41,6 @@ export interface DonHangHienTaiDto {
   chiTietDonHangs: ChiTietDonHangDto[];
 }
 
-// Tạm thời mô phỏng Model Món ăn (Nếu bạn đã có ở menu.model.ts thì có thể import vào)
 export interface MonAn {
   maMonAn: number;
   tenMonAn: string;

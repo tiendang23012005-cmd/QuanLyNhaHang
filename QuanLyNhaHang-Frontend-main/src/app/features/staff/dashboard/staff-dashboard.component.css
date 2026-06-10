@@ -1,78 +1,148 @@
-.pos-container {
+/* ======== THANH HEADER QUÁN THƯƠNG HIỆU MỚI ======== */
+.restaurant-header {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  color: white;
+  padding: 15px 30px;
   display: flex;
-  height: 100vh;
-  background-color: #f8f9fc;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  color: #333;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
-
-/* ======== CỘT TRÁI: SƠ ĐỒ BÀN ======== */
-.tables-section {
-  flex: 6;
-  padding: 20px;
-  border-right: 1px solid #e0e0e0;
-  overflow-y: auto;
-}
-
-.header-filters {
-  margin-bottom: 20px;
+.logo-area {
   display: flex;
-  gap: 15px;
-  font-size: 14px;
+  align-items: center;
+  gap: 12px;
 }
-
-.grid-tables {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 20px;
-}
-
-.table-card {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 20px 10px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-/* Các trạng thái bàn */
-.status-trong {
-  border-color: #f39c12; /* Màu cam nhạt giống thẻ MV */
+.logo-area i {
+  font-size: 26px;
   color: #f39c12;
 }
+.logo-area h1 {
+  font-size: 22px;
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.user-profile {
+  font-size: 14px;
+  background: rgba(255,255,255,0.15);
+  padding: 6px 14px;
+  border-radius: 20px;
+}
 
+/* CONTAINER TỔNG THỂ */
+.dashboard-container {
+  display: flex;
+  height: calc(100vh - 65px);
+  background-color: #f4f6f9;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ======== CỘT TRÁI: SƠ ĐỒ PHỤC VỤ ======== */
+.tables-section {
+  flex: 6;
+  border-right: 1px solid #e0e0e0;
+  padding: 20px;
+  overflow-y: auto;
+}
+.section-title h2 {
+  font-size: 18px;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+/* KHU VỰC MANG VỀ RIÊNG BIỆT */
+.takeaway-box {
+  margin-bottom: 25px;
+  max-width: 200px;
+}
+.status-takeaway {
+  border: 2px dashed #e67e22 !important;
+  background-color: #fff5eb !important;
+  color: #e67e22 !important;
+}
+
+/* LƯỚI SƠ ĐỒ BÀN */
+.grid-tables {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 15px;
+}
+.table-card {
+  background: #fff;
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  padding: 15px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+.table-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Trạng thái màu sắc bàn ăn */
+.status-trong {
+  border-left: 5px solid #2ecc71;
+}
 .status-phuc-vu {
-  border-color: #6a5af9; /* Tím đặc trưng */
-  color: #6a5af9;
-  background-color: #f0edff;
+  border-left: 5px solid #e74c3c;
+  background-color: #fdf2f2;
 }
-
 .active-selection {
-  box-shadow: 0 0 0 2px #6a5af9;
-  transform: scale(1.02);
+  box-shadow: 0 0 0 3px #2a5298 !important;
+  transform: scale(1.03);
+}
+.icon-ban {
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+.table-number {
+  display: block;
+  font-weight: bold;
+  font-size: 16px;
+  color: #2c3e50;
+}
+.table-status {
+  font-size: 11px;
+  color: #7f8c8d;
+  margin-top: 4px;
+  display: inline-block;
 }
 
-.icon-ban { font-size: 24px; margin-bottom: 8px; }
-.table-number { display: block; font-weight: bold; font-size: 18px; margin-bottom: 5px; color: #333;}
-.table-status { font-size: 12px; color: #666;}
-
-/* ======== CỘT PHẢI: POS HÓA ĐƠN ======== */
+/* ======== CỘT PHẢI: CHI TIẾT HÓA ĐƠN ======== */
 .orders-section {
   flex: 4;
   background: #fff;
   display: flex;
   flex-direction: column;
+  box-shadow: -2px 0 10px rgba(0,0,0,0.02);
 }
-
 .empty-state {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
-  color: #888;
+  color: #95a5a6;
+  padding: 30px;
+  text-align: center;
+}
+.empty-state i {
+  font-size: 40px;
+  margin-bottom: 15px;
+}
+.btn-primary-action {
+  background: #2ecc71;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 15px;
 }
 
 .bill-wrapper {
@@ -81,138 +151,316 @@
   height: 100%;
   padding: 20px;
 }
-
 .bill-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   border-bottom: 1px solid #eee;
-  padding-bottom: 15px;
+  padding-bottom: 12px;
   margin-bottom: 15px;
 }
-
-.bill-header h3 { margin: 0; font-size: 18px; }
-.bill-header small { display: block; font-size: 12px; color: #888; font-weight: normal; margin-top: 4px; }
-.ma-don { font-weight: bold; }
-
-/* Danh sách món ăn */
-.bill-items {
-  flex: 1; /* Chiếm khoảng trống còn lại */
-  overflow-y: auto;
+.badge-process {
+  background: #e74c3c;
+  color: white;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  vertical-align: middle;
 }
-
-.item-row {
-  background: #f8f9fc;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 10px;
+.ma-don {
+  font-size: 12px;
+  color: #7f8c8d;
 }
-
-.item-info {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.item-name { font-weight: 600; font-size: 14px;}
-.item-price { color: #888; font-size: 13px;}
-
-.item-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.qty-control {
-  display: flex;
-  align-items: center;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.qty-control button {
-  background: none; border: none; padding: 5px 12px; cursor: pointer; color: #333;
-}
-.qty-control input {
-  width: 40px; text-align: center; border: none; border-left: 1px solid #ddd; border-right: 1px solid #ddd; font-weight: bold;
-}
-
-.item-total { font-weight: bold; color: #6a5af9; }
 
 .btn-them-mon {
   width: 100%;
-  padding: 12px;
-  background-color: #6a5af9;
+  padding: 10px;
+  background-color: #2a5298;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
-  margin: 15px 0;
+  margin-bottom: 15px;
 }
 
-/* Phần tổng tiền và action */
+/* DANH SÁCH MÓN ĂN */
+.bill-items-list {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 15px;
+}
+.bill-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px dashed #eee;
+}
+.item-info {
+  flex: 2;
+}
+.item-name {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+}
+.item-price {
+  font-size: 12px;
+  color: #7f8c8d;
+}
+.item-qty-control {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.qty-btn {
+  background: #f4f6f9;
+  border: none;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+}
+.qty-input {
+  width: 30px;
+  text-align: center;
+  border: none;
+  font-weight: bold;
+}
+.item-total {
+  flex: 1;
+  text-align: right;
+  font-weight: bold;
+  color: #2a5298;
+}
+
+/* PHẦN TỔNG TIỀN */
 .bill-summary {
-  border-top: 2px dashed #eee;
-  padding-top: 15px;
-  margin-bottom: 20px;
+  border-top: 2px dashed #ccc;
+  padding-top: 12px;
 }
-
 .summary-row {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
-  font-size: 14px;
+  margin-bottom: 6px;
+  font-size: 13px;
 }
-
 .total-row {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   margin-top: 10px;
+  color: #333;
+}
+.total-price {
+  color: #e74c3c;
+  font-size: 20px;
 }
 
+/* HÀNH ĐỘNG POS */
 .bill-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 2fr;
   gap: 10px;
+  margin-top: 10px;
 }
-
-.bill-actions button {
-  padding: 12px;
+.btn-in-tam {
+  background: #95a5a6;
+  color: white;
   border: none;
-  border-radius: 8px;
-  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-thanhtoan {
+  background: #2ecc71;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 6px;
   cursor: pointer;
 }
 
-.btn-huy { background: #f1f3f5; color: #333; }
-.btn-thongbao { background: #f1f3f5; color: #333; }
-.btn-in { background: #fff; border: 1px solid #6a5af9 !important; color: #6a5af9; }
-.btn-thanhtoan { background: #6a5af9; color: #fff; }
-
-/* ======== MODAL THÊM MÓN ======== */
+/* MODAL OVERLAY */
 .modal-overlay {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center;
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.5);
+  display: flex; justify-content: center; align-items: center;
   z-index: 1000;
 }
 .modal-content {
-  background: #fff; border-radius: 12px; width: 600px; max-width: 90%; padding: 20px;
+  background: #fff; border-radius: 12px; width: 650px; max-width: 90%; padding: 25px;
 }
 .modal-header {
-  display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px;
+  display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px;
 }
 .btn-close {
-  background: none; border: none; font-size: 24px; cursor: pointer;
+  background: none; border: none; font-size: 28px; cursor: pointer;
 }
 .menu-table {
-  width: 100%; border-collapse: collapse;
+  width: 100%; border-collapse: collapse; margin-top: 15px;
 }
 .menu-table th, .menu-table td {
-  padding: 10px; border-bottom: 1px solid #eee; text-align: left;
+  padding: 12px; border-bottom: 1px solid #eee; text-align: left;
+}
+.txt-price {
+  color: #e74c3c; font-weight: 600;
 }
 .btn-add-item {
-  background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;
+  background: #2ecc71; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;
+}
+
+/* ==========================================================================
+   CSS CẤU HÌNH POPUP VÀ XÁC NHẬN CHUNG
+   ========================================================================== */
+.text-center { text-align: center; }
+.justify-center { justify-content: center !important; }
+.font-bold { font-weight: bold; }
+
+/* Nội dung popup xác nhận nhỏ */
+.modal-confirm-content {
+  background: #fff;
+  border-radius: 12px;
+  width: 420px;
+  max-width: 90%;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  animation: slideUp 0.25s ease-out;
+}
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-confirm-header {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.modal-confirm-header.danger { color: #dc3545; }
+.modal-confirm-header.success { color: #28a745; }
+
+.modal-confirm-body {
+  color: #555;
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 25px;
+}
+
+.modal-confirm-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* Kiểu dáng các nút trong popup hỏi han */
+.modal-confirm-footer button {
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+.btn-cancel { background: #e0e0e0; color: #333; }
+.btn-confirm { background: #dc3545; color: white; }
+.btn-no-print { background: #6c757d; color: white; }
+.btn-yes-print { background: #28a745; color: white; font-size: 15px; }
+
+/* ==========================================================================
+   CSS XEM TRƯỚC PHÔI HÓA ĐƠN POS NHIỆT K80
+   ========================================================================== */
+.modal-content-invoice {
+  background: #fff;
+  border-radius: 8px;
+  padding: 15px;
+  width: 340px; /* Định dạng bao khung hiển thị giả lập trên màn hình */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+}
+
+.invoice-pos-paper {
+  background: #fff;
+  color: #000;
+  font-family: 'Courier New', Courier, monospace; /* Font chữ máy in hóa đơn đặc trưng */
+  font-size: 13px;
+  line-height: 1.4;
+  padding: 5px;
+}
+
+.restaurant-name { text-align: center; font-size: 15px; font-weight: bold; margin: 0 0 4px 0; }
+.restaurant-info { text-align: center; font-size: 11px; margin: 0; color: #444; }
+.invoice-title { text-align: center; font-size: 18px; font-weight: bold; margin: 12px 0 6px 0; }
+.invoice-meta { text-align: center; font-size: 12px; margin: 0; }
+
+.invoice-info { margin: 15px 0 10px 0; font-size: 13px; }
+.invoice-info p { margin: 3px 0; }
+
+.dashed-line {
+  border-top: 1px dashed #000;
+  margin: 10px 0;
+  width: 100%;
+}
+
+.invoice-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.invoice-table th { border-bottom: 1px dashed #000; padding-bottom: 5px; font-weight: bold; }
+.invoice-table td { padding: 6px 0; vertical-align: top; }
+.food-name { max-width: 140px; word-break: break-word; }
+
+.invoice-summary { margin-top: 10px; }
+.summary-line { display: flex; justify-content: space-between; padding: 3px 0; }
+.total-pay { font-size: 16px; font-weight: bold; }
+
+.invoice-footer { text-align: center; margin-top: 20px; }
+.thank-you { font-weight: bold; font-size: 12px; margin-bottom: 4px; }
+.powered-by { font-size: 9px; color: #777; margin: 0; }
+
+/* Thanh chức năng dưới đáy modal xem hóa đơn */
+.modal-footer-tools {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid #eee;
+  padding-top: 12px;
+}
+.btn-close-view { flex: 1; padding: 10px; background: #eee; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;}
+.btn-trigger-print { flex: 2; padding: 10px; background: #6a5af9; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;}
+
+/* ==========================================================================
+   BỘ LỌC QUAN TRỌNG: XỬ LÝ LỆNH IN KHI RA MÁY IN THỰC TẾ (@media print)
+   ========================================================================== */
+@media print {
+  /* Ẩn triệt để toàn bộ ứng dụng Angular và các popup nền mờ khác */
+  body *, 
+  app-root > :not(.invoice-print-modal), 
+  .no-print {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Đưa cửa sổ modal in ra góc tuyệt đối của trang in */
+  .invoice-print-modal {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    height: auto !important;
+    background: white !important;
+    display: block !important;
+  }
+
+  /* Định hình chuẩn cuộn giấy nhiệt 80mm của máy in nhà hàng */
+  .modal-content-invoice {
+    border: none !important;
+    box-shadow: none !important;
+    width: 76mm !important; /* Vừa vặn khổ giấy in nhiệt K80 */
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+  }
+  
+  .invoice-pos-paper {
+    font-size: 12px !important; /* Đảm bảo chữ sắc nét khi in nhiệt */
+  }
 }

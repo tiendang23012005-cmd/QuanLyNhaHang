@@ -7,40 +7,36 @@ import { NhanVienApiResponse, BanAnDto, DonHangNhanVienDto, DonHangHienTaiDto } 
   providedIn: 'root'
 })
 export class NhanVienService {
-  private apiUrl = 'https://localhost:7043/api/nhanvien'; 
+  private apiUrl = 'https://localhost:7043/api/nhanvien';
 
   constructor(private http: HttpClient) {}
 
-  // Lấy danh sách sơ đồ bàn (Đã có)
+  // Lấy sơ đồ bàn tại quán
   getDanhSachBan(): Observable<NhanVienApiResponse<BanAnDto[]>> {
     return this.http.get<NhanVienApiResponse<BanAnDto[]>>(`${this.apiUrl}/ban-an`);
   }
 
-  // Lấy đơn hàng mới (Đã có)
+  // Xem danh sách hóa đơn mới
   getDonHangMoi(): Observable<NhanVienApiResponse<DonHangNhanVienDto[]>> {
     return this.http.get<NhanVienApiResponse<DonHangNhanVienDto[]>>(`${this.apiUrl}/don-hang-moi`);
   }
 
-  // ==========================================
-  // CÁC HÀM MỚI CHO POS
-  // ==========================================
-
-  // 1. Lấy chi tiết đơn hàng của 1 bàn
+  // Chi tiết hóa đơn hiện tại theo mã bàn (Nếu maBan = 0 => Lấy đơn Mang về)
   getDonHangTheoBan(maBan: number): Observable<DonHangHienTaiDto> {
     return this.http.get<DonHangHienTaiDto>(`${this.apiUrl}/ban/${maBan}/don-hang`);
   }
 
-  // 2. Cập nhật số lượng món
+  // Tăng/giảm hoặc xóa món trực tiếp
   capNhatSoLuongMon(maChiTiet: number, soLuongMoi: number): Observable<any> {
     return this.http.put(`${this.apiUrl}/chi-tiet/${maChiTiet}/so-luong`, { soLuongMoi });
   }
 
-  // 3. Thêm món mới vào đơn
-  themMonVaoDon(maDonHang: number, maMonAn: number, soLuong: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/don-hang/them-mon`, { maDonHang, maMonAn, soLuong });
+  // Thêm món mới vào hóa đơn (Hỗ trợ truyền maBan lên để Backend tự động tạo đơn nếu bàn trống)
+  themMonVaoDonHienTai(maDonHang: number, maMonAn: number, soLuong: number, maBan?: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/don-hang/them-mon`, { maDonHang, maMonAn, soLuong, maBan });
   }
 
-  // 4. Thanh toán đơn hàng
+  // Thanh toán hóa đơn và reset trạng thái bàn
   xacNhanThanhToan(maDonHang: number): Observable<any> {
     return this.http.put(`${this.apiUrl}/don-hang/${maDonHang}/thanh-toan`, {});
   }
