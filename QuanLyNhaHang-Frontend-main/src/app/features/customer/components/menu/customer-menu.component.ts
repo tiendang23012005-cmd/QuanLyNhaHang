@@ -1,7 +1,9 @@
 import { Component, OnInit, inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router'; // THÊM MỚI: Dùng để chuyển trang
 import { CustomerService } from '../../services/customer.service';
+import { AuthService } from '../../../../core/services/auth.service'; // THÊM MỚI: Hãy điều chỉnh lại số dấu chấm (../) cho đúng đường dẫn thực tế của bạn
 import { MonAn, CartItem, OrderRequest } from '../../models/menu.model';
 
 @Component({
@@ -33,6 +35,8 @@ export class CustomerMenuComponent implements OnInit {
   ];
 
   private customerService = inject(CustomerService);
+  private authService = inject(AuthService); // THÊM MỚI
+  private router = inject(Router);             // THÊM MỚI
   private platformId = inject(PLATFORM_ID);
   private cdr = inject(ChangeDetectorRef);
 
@@ -66,6 +70,21 @@ export class CustomerMenuComponent implements OnInit {
   async onCheckout() {
     if (this.cartItems.length === 0) return;
 
+    // =========================================================================
+    // KHU VỰC THÊM MỚI: KIỂM TRA ĐĂNG NHẬP TRƯỚC KHI ĐẶT MÓN
+    // Đoạn code dưới tự động nhận diện nếu AuthService của bạn có hàm check (như isLoggedIn() hoặc isAuthenticated())
+    // Nếu không tìm thấy hàm, nó sẽ tự động check sự tồn tại của Token dưới LocalStorage.
+    // =========================================================================
+    const hasCheckMethod = typeof this.authService.isLoggedIn === 'function';
+    const isUserLoggedIn = hasCheckMethod ? this.authService.isLoggedIn() : !!localStorage.getItem('token');
+
+    if (!isUserLoggedIn) {
+      alert('Vui lòng đăng nhập vào hệ thống trước khi tiến hành đặt món!');
+      this.router.navigate(['/login']);
+      return; // Chặn đứng luồng xử lý tiếp theo
+    }
+    // =========================================================================
+
     if (this.selectedOrderType === 'Tại quán' && !this.selectedTable) {
       this.errorMessage = 'Vui lòng chọn số bàn!';
       return;
@@ -91,7 +110,6 @@ export class CustomerMenuComponent implements OnInit {
       if (this.selectedPayment === 'VNPay') {
         await this.processVNPayPayment(orderPayload);
       } else {
-        // Thanh toán tiền mặt / chuyển khoản
         const res = await this.customerService.placeOrder(orderPayload).toPromise();
         this.successMessage = 'Đặt món thành công!';
         this.customerService.clearCart();
@@ -110,7 +128,7 @@ export class CustomerMenuComponent implements OnInit {
       const response = await this.customerService.createVNPayPayment(orderPayload).toPromise();
       
       if (response?.isSuccess && response.paymentUrl) {
-        window.location.href = response.paymentUrl;   // Chuyển sang trang VNPay
+        window.location.href = response.paymentUrl;
       } else {
         this.errorMessage = response?.message || 'Không thể tạo link thanh toán VNPay';
       }

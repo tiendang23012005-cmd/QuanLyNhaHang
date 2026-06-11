@@ -1,0 +1,29 @@
+<div class="payment-container">
+      <div class="payment-card failed-card">
+        <div class="icon-circle">
+          <svg class="cross" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="cross__circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="cross__path cross__path--right" fill="none" d="M16,16 l20,20" />
+            <path class="cross__path cross__path--left" fill="none" d="M16,36 l20,-20" />
+          </svg>
+        </div>
+        
+        <h1>Thanh toán thất bại!</h1>
+        <p class="subtitle">Rất tiếc, giao dịch của bạn không thể hoàn tất hoặc đã bị hủy từ hệ thống.</p>
+        
+        <div class="order-info">
+          <div class="info-row">
+            <span>Mã đơn hàng:</span>
+            <strong>{{ orderIdDisplay }}</strong>
+          </div>
+          <div class="info-row error-msg" *ngIf="errorMessage">
+            <span>Lý do:</span>
+            <strong>{{ errorMessage }}</strong>
+          </div>
+        </div>
+        
+        <button routerLink="/menu" class="btn btn-failed">
+          Thử đặt lại món khác
+        </button>
+      </div>
+    </div>

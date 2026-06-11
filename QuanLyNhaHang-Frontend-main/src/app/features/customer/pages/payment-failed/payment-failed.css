@@ -1,0 +1,68 @@
+.payment-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
+      background-color: #f4f7f6;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+    }
+    .payment-card {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      text-align: center;
+      max-width: 450px;
+      width: 100%;
+    }
+    .failed-card h1 { color: #e74c3c; margin-top: 20px; font-size: 26px; font-weight: bold; }
+    .subtitle { color: #666; margin-bottom: 25px; line-height: 1.5; font-size: 15px; }
+    .order-info {
+      background: #fdf5f5;
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      border: 1px dashed #e74c3c;
+      color: #c0392b;
+      font-size: 15px;
+      text-align: left;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+    }
+    .error-msg {
+      border-top: 1px solid #fadbd8;
+      margin-top: 10px;
+      padding-top: 10px;
+      font-size: 14px;
+      display: block;
+      text-align: left;
+    }
+    .error-msg strong { display: block; margin-top: 4px; color: #e74c3c; }
+    .btn {
+      display: inline-block;
+      padding: 14px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .btn-failed { background-color: #e74c3c; color: white; }
+    .btn-failed:hover { background-color: #c0392b; box-shadow: 0 4px 12px rgba(231,76,60,0.3); transform: translateY(-2px); }
+    
+    /* Animation cho Icon Failed */
+    .icon-circle { display: flex; justify-content: center; margin-bottom: 20px; }
+    .cross__circle { stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 2; stroke-miterlimit: 10; stroke: #e74c3c; fill: none; animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards; }
+    .cross { width: 80px; height: 80px; border-radius: 50%; display: block; stroke-width: 3; stroke: #e74c3c; stroke-miterlimit: 10; margin: 0 auto; box-shadow: inset 0px 0px 0px #e74c3c; animation: fillred .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both; }
+    .cross__path { stroke-dasharray: 48; stroke-dashoffset: 48; transform-origin: 50% 50%; animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards; }
+    @keyframes stroke { 100% { stroke-dashoffset: 0; } }
+    @keyframes scale { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } }
+    @keyframes fillred { 100% { box-shadow: inset 0px 0px 0px 30px rgba(231,76,60,0.1); } }

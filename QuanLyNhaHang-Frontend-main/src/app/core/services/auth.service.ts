@@ -10,27 +10,42 @@ export class AuthService {
   // Cổng API chạy Backend .NET Core của bạn
   private apiUrl = 'https://localhost:7043/api/auth';
 
-  // Luồng dữ liệu BehaviorSubject quản lý trạng thái phiên đăng nhập (Lấy từ LocalStorage nếu có)
-  private currentUserSubject = new BehaviorSubject<UserSession | null>(
-    typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('currentUser') || 'null') : null
-  );
+  // Khởi tạo BehaviorSubject rỗng trước
+  private currentUserSubject = new BehaviorSubject<UserSession | null>(null);
 
-  // Các Component khác (như Thanh điều hướng) sẽ subscribe luồng này để nhận biết User thay đổi
+  // Các Component khác (như Thanh điều hướng) sẽ subscribe luồng này
   public currentUser$: Observable<UserSession | null> = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.loadSession(); // Tự động load session khi ứng dụng khởi chạy
+  }
+
+  // Khôi phục session từ sessionStorage (giúp F5 không bị mất đăng nhập, nhưng đóng web sẽ mất)
+  private loadSession() {
+    if (typeof window !== 'undefined') {
+      const sessionData = sessionStorage.getItem('currentUser');
+      if (sessionData) {
+        try {
+          this.currentUserSubject.next(JSON.parse(sessionData));
+        } catch (e) {
+          console.error('Lỗi parse session', e);
+          sessionStorage.removeItem('currentUser');
+        }
+      }
+    }
+  }
 
   // Hàm lấy nhanh giá trị hiện tại của User (Snapshot)
   public get currentUserValue(): UserSession | null {
     return this.currentUserSubject.value;
   }
 
-  // 1. Nghiệp vụ Đăng ký tài khoản Khách hàng
+  // 1. Nghiệp vụ Đăng ký
   register(user: any): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, user);
   }
 
-  // 2. Nghiệp vụ Đăng nhập hệ thống (Lưu Token và phát đi trạng thái)
+  // 2. Nghiệp vụ Đăng nhập hệ thống
   login(identifier: string, matKhau: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(
       `${this.apiUrl}/login`,
@@ -38,8 +53,7 @@ export class AuthService {
         Identifer: identifier,
         MatKhau: matKhau
       }
-    )
-    .pipe(
+    ).pipe(
       tap(response => {
         if (response.isSuccess && response.token) {
           const userSession: UserSession = {
@@ -47,9 +61,11 @@ export class AuthService {
             role: response.role!,
             token: response.token
           };
-          // Lưu phiên đăng nhập vào bộ nhớ trình duyệt
-          localStorage.setItem('currentUser', JSON.stringify(userSession));
-          // Phát trạng thái đăng nhập mới ra toàn ứng dụng Angular
+          
+          // Dùng sessionStorage thay vì localStorage
+          sessionStorage.setItem('currentUser', JSON.stringify(userSession));
+          
+          // Phát trạng thái đăng nhập mới ra toàn ứng dụng
           this.currentUserSubject.next(userSession);
         }
       })
@@ -58,7 +74,16 @@ export class AuthService {
 
   // 3. Nghiệp vụ Đăng xuất
   logout() {
-    localStorage.removeItem('currentUser');
-    this.currentUserSubject.next(null); // Phát tín hiệu NULL (Đã đăng xuất)
+    sessionStorage.removeItem('currentUser');
+    this.currentUserSubject.next(null); // Phát tín hiệu NULL
+  }
+
+  // SỬA LẠI HÀM NÀY:
+  isLoggedIn(): boolean {
+    // Lấy trạng thái từ biến currentUserValue (đã được parse chuẩn xác từ sessionStorage)
+    const user = this.currentUserValue;
+    
+    // Nếu user có tồn tại và bên trong có chứa token -> Đã đăng nhập
+    return !!(user && user.token); 
   }
 }
