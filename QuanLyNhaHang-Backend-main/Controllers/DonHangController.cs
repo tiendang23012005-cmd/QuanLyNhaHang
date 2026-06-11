@@ -19,6 +19,8 @@ namespace QuanLyNhaHangAPI.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateOrder([FromBody] OrderRequestDTO request)
         {
+            // Sử dụng Transaction để đảm bảo nếu lỗi giữa chừng thì sẽ Rollback, không bị rác dữ liệu
+            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 if (request == null || !request.ChiTietDonHang.Any())
@@ -62,13 +64,29 @@ namespace QuanLyNhaHangAPI.Controllers
                     };
                     _context.ChiTietDonHang.Add(chiTiet);
                 }
-
                 await _context.SaveChangesAsync();
+
+                // 3. (MỚI THÊM) CẬP NHẬT LẠI TRẠNG THÁI BÀN ĂN
+                // Nếu khách đặt ăn tại quán và có mã bàn hợp lệ -> Cập nhật bàn thành 'Đang phục vụ'
+                if (loaiDH == "Tại quán" && request.MaBan.HasValue && request.MaBan.Value > 0)
+                {
+                    var banAn = await _context.BanAn.FindAsync(request.MaBan.Value);
+                    if (banAn != null)
+                    {
+                        banAn.TrangThaiBan = "Đang phục vụ";
+                        _context.BanAn.Update(banAn);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+
+                // Xác nhận hoàn thành Transaction lưu vào CSDL
+                await transaction.CommitAsync();
 
                 return Ok(new { isSuccess = true, message = "Đặt món thành công! Đơn hàng đã chuyển xuống bếp." });
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync();
                 var loiChiTiet = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
                 return StatusCode(500, new { isSuccess = false, message = "Lỗi hệ thống: " + loiChiTiet });
             }
