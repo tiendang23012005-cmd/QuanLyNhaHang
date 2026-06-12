@@ -1,0 +1,141 @@
+.table-container {
+    background: white;
+    border-radius: 30px;
+    padding: 30px;
+}
+
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.header-section small {
+    color: #9ca3af;
+    font-weight: 700;
+}
+
+.header-section h2 {
+    margin: 10px 0;
+    color: #111827;
+}
+
+.header-section p {
+    color: #9ca3af;
+}
+
+.add-btn {
+    background: #6c4cf1;
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(108, 76, 241, 0.3);
+    transition: .3s;
+}
+
+.add-btn:hover {
+    background: #5a3ee8;
+}
+
+.table-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 25px;
+}
+
+.table-card {
+    background: #f9fafb;
+    border-radius: 25px;
+    padding: 25px;
+    text-align: center;
+    transition: .3s;
+}
+
+.table-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, .08);
+}
+
+.table-icon {
+    width: 70px;
+    height: 70px;
+    margin: auto;
+    margin-bottom: 20px;
+    border-radius: 50%;
+    background: #ede9fe;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 32px;
+}
+
+.table-card h3 {
+    margin: 10px 0;
+    color: #111827;
+}
+
+.table-card p {
+    color: #6b7280;
+    margin-bottom: 20px;
+}
+
+.status {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.empty {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.busy {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.reserved {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.action-buttons button {
+    flex: 1;
+    border: none;
+    border-radius: 12px;
+    padding: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: .3s;
+}
+
+.edit-btn {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.edit-btn:hover {
+    background: #bfdbfe;
+}
+
+.delete-btn {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.delete-btn:hover {
+    background: #fecaca;
+}

@@ -16,5 +16,8 @@ namespace QuanLyNhaHangAPI.Services
         Task<NhanVienApiResponse<int>> ThemMonVaoDonHienTaiAsync(ThemMonVaoDonRequest request);
 
         Task<NhanVienApiResponse<bool>> XacNhanThanhToanAsync(int maDonHang);
+
+        // Thêm dòng này vào dưới các hàm hiện tại
+        Task<NhanVienApiResponse<bool>> HuyDonHangAsync(int maDonHang);
     }
 }

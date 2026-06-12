@@ -1,0 +1,91 @@
+<div class="create-container">
+
+    <div class="header">
+
+        <div>
+
+            <small>QUẢN LÝ BÀN</small>
+
+            <h2>Cập nhật bàn</h2>
+
+            <p>
+                Chỉnh sửa thông tin bàn
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="form-card">
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label>🍽️ Số bàn</label>
+
+                <input
+                    type="text"
+                    [(ngModel)]="Table.soBan">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>👥 Sức chứa</label>
+
+                <input
+                    type="number"
+                    min="1"
+                    [(ngModel)]="Table.sucChua">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>📌 Trạng thái</label>
+
+                <select
+                    [(ngModel)]="Table.trangThaiBan">
+
+                    <option value="Trống">
+                        Trống
+                    </option>
+
+                    <option value="Đang phục vụ">
+                        Đang phục vụ
+                    </option>
+
+                    <option value="Đã đặt trước">
+                        Đã đặt trước
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="button-group">
+
+            <button
+                class="cancel-btn"
+                (click)="GoBack()">
+
+                ← Quay lại
+
+            </button>
+
+            <button
+                class="save-btn"
+                (click)="Save()">
+
+                💾 Cập nhật
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>

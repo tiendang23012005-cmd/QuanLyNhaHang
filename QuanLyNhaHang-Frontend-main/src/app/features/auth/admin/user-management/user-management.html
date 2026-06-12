@@ -1,0 +1,139 @@
+<div class="table-card">
+
+    <div class="card-header">
+
+        <small>QUẢN LÝ NHÂN VIÊN</small>
+
+        <h2>Danh sách nhân viên</h2>
+
+        <p>
+            Quản lý thông tin nhân viên trong hệ thống
+        </p>
+
+    </div>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>TÊN ĐĂNG NHẬP</th>
+                <th>EMAIL</th>
+                <th>SỐ ĐIỆN THOẠI</th>
+                <th>VAI TRÒ</th>
+                <th>TRẠNG THÁI</th>
+                <th>THAO TÁC</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <tr
+                *ngFor="
+                    let user of Users;
+                    trackBy: trackByUser
+                ">
+
+                <td>
+
+                    <div class="employee-info">
+
+                        <div class="avatar-small">
+
+                            {{ user.hoTen?.charAt(0) }}
+
+                        </div>
+
+                        {{ user.hoTen }}
+
+                    </div>
+
+                </td>
+
+                <td>
+
+                    {{ user.email }}
+
+                </td>
+
+                <td>
+
+                    {{ user.dienThoai }}
+
+                </td>
+
+                <td>
+
+                    <span class="role-badge">
+
+                        {{ user.vaiTro }}
+
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <span
+                        [class.status-active]="user.trangThaiHoatDong"
+                        [class.status-lock]="!user.trangThaiHoatDong">
+
+                        {{ user.trangThaiHoatDong
+                        ? 'Hoạt động'
+                        : 'Đã khóa' }}
+
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <div class="action-buttons">
+
+                        <button
+                            class="edit-btn"
+                            [routerLink]="[
+                                '/admin/edit-employee',
+                                user.maNguoiDung
+                            ]">
+
+                            Cập nhật
+
+                        </button>
+
+                        <button
+                            class="status-btn"
+                            (click)="ToggleStatus(user)">
+
+                            {{ user.trangThaiHoatDong
+                            ? 'Khóa'
+                            : 'Mở khóa' }}
+
+                        </button>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+            <tr *ngIf="Users.length === 0">
+
+                <td
+                    colspan="6"
+                    style="text-align: center;">
+
+                    Đang tải dữ liệu...
+
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</div>

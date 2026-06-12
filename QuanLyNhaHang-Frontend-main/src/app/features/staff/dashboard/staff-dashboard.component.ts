@@ -28,6 +28,7 @@ export class StaffDashboardComponent implements OnInit, OnDestroy {
   hienThiModalXacNhanThanhToan = false;    // Popup xác nhận bấm Thanh toán
   hienThiModalHoiInSauThanhToan = false;   // Popup hỏi in hóa đơn sau khi API thành công
   ngayInHienTai: Date = new Date();        // Thời gian in hóa đơn công bố
+  hienThiModalXoaDon: boolean = false;
   
   private pollingSub!: Subscription;
   private nhanVienService = inject(NhanVienService);
@@ -108,15 +109,33 @@ export class StaffDashboardComponent implements OnInit, OnDestroy {
   }
 
   themMonVaoDon(mon: MonAn): void {
+    // Nếu chưa có đơn hàng thì mặc định maDonHang = 0 để Backend tự tạo đơn mới
     const maDonHang = this.donHangHienTai ? this.donHangHienTai.maDonHang : 0;
-    const maBan = this.banDangChon ? this.banDangChon.maBan : undefined;
     
+    // Dùng ?? 0 để đảm bảo luôn gửi số nguyên lên API (0 = Mang về)
+    const maBan = this.banDangChon?.maBan ?? 0;
+
     this.nhanVienService.themMonVaoDonHienTai(maDonHang, mon.maMonAn, 1, maBan).subscribe({
-      next: () => {
+      next: (res: any) => {
+        // Kiểm tra xem backend có báo lỗi logic không (nếu bạn bọc response trong isSuccess)
+        if (res && res.isSuccess === false) {
+          alert('Không thể thêm món: ' + res.message);
+          return;
+        }
+
+        // BẮT BUỘC: Đóng modal để người dùng nhìn thấy hóa đơn vừa được tạo bên dưới
+        this.dongModalThemMon();
+        
+        // Cập nhật lại UI Hóa đơn và Sơ đồ bàn
         if (this.banDangChon) {
           this.refreshDonHangHienTai(this.banDangChon.maBan);
           this.loadDanhSachBan();
         }
+      },
+      error: (err) => {
+        // Hiển thị popup ngay lập tức nếu API sập hoặc báo lỗi 400 Bad Request
+        console.error('Chi tiết lỗi API:', err);
+        alert('Lỗi hệ thống khi thêm món: ' + (err.error?.message || err.message));
       }
     });
   }
@@ -133,6 +152,28 @@ export class StaffDashboardComponent implements OnInit, OnDestroy {
           this.loadDanhSachBan(); // Tải lại sơ đồ bàn trống công khai
         },
         error: () => { alert('Lỗi! Không thể xác nhận thanh toán.'); }
+      });
+    }
+  }
+
+  // XÓA ĐƠN: Hủy đơn hàng và giải phóng bàn
+  huyDonHang(): void {
+    if (!this.donHangHienTai) return;
+    
+    if (confirm(`CHÚ Ý: Bạn có chắc chắn muốn HỦY/XÓA hoàn toàn hóa đơn của ${this.banDangChon?.soBan}?`)) {
+      this.nhanVienService.huyDonHang(this.donHangHienTai.maDonHang).subscribe({
+        next: (res) => {
+          // Nhờ đổi BadRequest thành Ok ở Backend, dòng này sẽ được chạy
+          if (res.isSuccess) {
+            alert('Hệ thống ghi nhận: Đã hủy đơn hàng thành công!');
+            this.lamMoiGiaoDienSauThanhToan(); 
+          } else {
+            alert('Không thể hủy: ' + res.message); // In ra lỗi DB nếu có
+          }
+        },
+        error: (err) => { 
+          alert('Mất kết nối máy chủ! ' + (err.error?.message || err.message)); 
+        }
       });
     }
   }
@@ -208,6 +249,8 @@ export class StaffDashboardComponent implements OnInit, OnDestroy {
     this.banDangChon = null;
     this.loadDanhSachBan(); // Tải lại sơ đồ bàn để hiển thị bàn trống màu cam
   }
+
+  
 
   moModalThemMon(): void { this.hienThiModalThemMon = true; }
   dongModalThemMon(): void { this.hienThiModalThemMon = false; }

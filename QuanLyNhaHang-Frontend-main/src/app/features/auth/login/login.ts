@@ -63,7 +63,7 @@ export class LoginComponent implements OnInit {
             alert('Đăng nhập thành công');
 
             if (res.role === 'Admin') {
-              this.router.navigate(['/user-management']);
+              this.router.navigate(['/admin/user-management']);
             } else if (res.role === 'Nhà bếp' || res.role === 'Phục vụ') {
               this.router.navigate(['/staff-dashboard']);
             } else {

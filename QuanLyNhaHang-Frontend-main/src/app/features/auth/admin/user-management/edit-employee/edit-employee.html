@@ -1,0 +1,45 @@
+<div class="card">
+
+    <h2>Cập nhật nhân viên</h2>
+
+    <input
+        placeholder="Họ tên"
+        [(ngModel)]="User.hoTen">
+
+    <input
+        placeholder="Email"
+        [(ngModel)]="User.email">
+
+    <input
+        placeholder="Điện thoại"
+        [(ngModel)]="User.dienThoai">
+
+    <select
+        [(ngModel)]="User.maVaiTro">
+
+        <option [value]="1">
+            Quản lý
+        </option>
+
+        <option [value]="2">
+            Phục vụ
+        </option>
+
+        <option [value]="3">
+            Bếp
+        </option>
+
+        <option [value]="4">
+            Thu ngân
+        </option>
+
+    </select>
+
+    <button
+        (click)="UpdateEmployee()">
+
+        Lưu thay đổi
+
+    </button>
+
+</div>

@@ -1,0 +1,127 @@
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                ☁
+            </div>
+
+            <span>FQCloud</span>
+
+        </div>
+
+        <nav>
+
+            <a
+                [routerLink]="['/admin/user-management']"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }">
+
+                👥 Quản lý nhân viên
+
+            </a>
+
+            <a
+                [routerLink]="['/admin/table-management']"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }">
+
+                🍽 Quản lý bàn
+
+            </a>
+
+            <a
+                [routerLink]="['/admin/food-management']"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }">
+
+                🍜 Quản lý món ăn
+
+            </a>
+
+            <a
+                [routerLink]="['/admin/revenue']"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }">
+
+                📈 Doanh thu
+
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <main class="content">
+
+        <div class="topbar">
+
+            <div>
+
+                <small>NHÂN SỰ F-CLOUD</small>
+
+                <h1>Hệ thống quản lý nhà hàng</h1>
+
+                <p>Quản lý nhân viên và hoạt động kinh doanh</p>
+
+            </div>
+
+            <div class="topbar-right">
+
+                <button class="notify-btn">
+                    🔔
+                </button>
+
+                <button
+                    class="add-btn"
+                    [routerLink]="['/admin/create-employee']">
+
+                    👥 + Thêm nhân viên
+
+                </button>
+
+                <div class="admin-info">
+
+                    <div class="avatar">
+
+                        {{ Avatar }}
+
+                    </div>
+
+                    <div class="admin-detail">
+
+                        <strong>
+
+                            {{ FullName }}
+
+                        </strong>
+
+                        <div class="role">
+
+                            {{ Role }}
+
+                        </div>
+
+                        <button
+                            class="logout-btn"
+                            (click)="logout()">
+
+                            Đăng xuất
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <router-outlet></router-outlet>
+
+    </main>
+
+</div>

@@ -71,5 +71,14 @@ namespace QuanLyNhaHangAPI.Controllers
             if (!result.IsSuccess) return BadRequest(result);
             return Ok(result);
         }
+
+        // [PUT] /api/nhanvien/don-hang/{maDonHang}/huy
+        [HttpPut("don-hang/{maDonHang}/huy")]
+        public async Task<IActionResult> HuyDonHang(int maDonHang)
+        {
+            var result = await _nhanVienService.HuyDonHangAsync(maDonHang);
+            // TRÁNH LỖI 400 TRÊN BROWSER: Luôn trả về Ok, frontend sẽ dùng result.IsSuccess để check
+            return Ok(result);
+        }
     }
 }

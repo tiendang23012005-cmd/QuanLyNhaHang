@@ -1,0 +1,92 @@
+<div class="table-container">
+
+    <div class="header-section">
+
+        <div>
+
+            <small>QUẢN LÝ BÀN</small>
+
+            <h2>Danh sách bàn</h2>
+
+            <p>
+                Quản lý trạng thái và thông tin các bàn trong nhà hàng
+            </p>
+
+        </div>
+
+        <button
+            class="add-btn"
+            (click)="AddTable()">
+
+            ➕ Thêm bàn
+
+        </button>
+
+    </div>
+
+    <p class="total-table">
+        Tổng số bàn: {{ Tables.length }}
+    </p>
+
+    <div class="table-grid">
+
+        <div
+            class="table-card"
+            *ngFor="let table of Tables">
+
+            <div class="table-icon">
+
+                🍽️
+
+            </div>
+
+            <h3>
+
+                {{ table.soBan }}
+
+            </h3>
+
+            <p>
+
+                Sức chứa:
+                <strong>{{ table.sucChua }} người</strong>
+
+            </p>
+
+            <span
+                class="status"
+                [ngClass]="{
+                    'empty': table.trangThaiBan === 'Trống',
+                    'busy': table.trangThaiBan === 'Đang phục vụ',
+                    'reserved': table.trangThaiBan === 'Đã đặt trước'
+                }">
+
+                {{ table.trangThaiBan }}
+
+            </span>
+
+            <div class="action-buttons">
+
+                <button
+                    class="edit-btn"
+                    (click)="EditTable(table)">
+
+                    ✏️ Sửa
+
+                </button>
+
+                <button
+                    class="delete-btn"
+                    (click)="DeleteTable(table)">
+
+                    🗑️ Xóa
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

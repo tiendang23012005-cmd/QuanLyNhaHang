@@ -1,0 +1,169 @@
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:#f6f7fc;
+}
+
+.layout{
+    display:flex;
+    min-height:100vh;
+}
+
+.sidebar{
+    width:240px;
+    background:white;
+    padding:30px 20px;
+    border-right:1px solid #eee;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:28px;
+    font-weight:700;
+    color:#6c4cf1;
+    margin-bottom:50px;
+}
+
+.logo-icon{
+    width:45px;
+    height:45px;
+    background:#ede9fe;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.sidebar nav{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.sidebar a{
+    text-decoration:none;
+    color:#555;
+    padding:16px;
+    border-radius:16px;
+    transition:.3s;
+}
+
+.sidebar a:hover{
+    background:#f3f4f6;
+}
+
+.sidebar a.active{
+    background:#ede9fe;
+    color:#6c4cf1;
+    font-weight:600;
+}
+
+.content{
+    flex:1;
+    padding:30px;
+}
+
+.topbar{
+    background:white;
+    border-radius:30px;
+    padding:30px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+}
+
+.topbar h1{
+    margin:10px 0;
+    font-size:42px;
+    color:#111827;
+}
+
+.topbar small{
+    color:#9ca3af;
+    font-weight:700;
+}
+
+.topbar p{
+    color:#9ca3af;
+}
+
+.topbar-right{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.notify-btn{
+    width:50px;
+    height:50px;
+    border:none;
+    border-radius:15px;
+    background:white;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+    cursor:pointer;
+}
+
+.add-btn{
+    background:#6c4cf1;
+    color:white;
+    border:none;
+    padding:15px 25px;
+    border-radius:15px;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 10px 25px rgba(108,76,241,.3);
+}
+
+.add-btn:hover{
+    background:#5a3ee8;
+}
+
+.admin-info{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.avatar{
+    width:50px;
+    height:50px;
+    background:#6c4cf1;
+    border-radius:50%;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-weight:bold;
+}
+
+.role{
+    color:#9ca3af;
+    margin-top:4px;
+}
+
+.admin-detail{
+    display:flex;
+    flex-direction:column;
+}
+
+.logout-btn{
+    margin-top:8px;
+    padding:0;
+    border:none;
+    background:transparent;
+    color:#ef4444;
+    font-size:13px;
+    cursor:pointer;
+    text-align:left;
+    font-weight:600;
+}
+
+.logout-btn:hover{
+    text-decoration:underline;
+}

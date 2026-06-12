@@ -40,4 +40,8 @@ export class NhanVienService {
   xacNhanThanhToan(maDonHang: number): Observable<any> {
     return this.http.put(`${this.apiUrl}/don-hang/${maDonHang}/thanh-toan`, {});
   }
+
+  huyDonHang(maDonHang: number) {
+    return this.http.put<any>(`${this.apiUrl}/don-hang/${maDonHang}/huy`, {});
+  }
 }

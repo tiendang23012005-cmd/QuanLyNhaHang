@@ -493,4 +493,51 @@
     font-size: 12px !important; /* Đảm bảo nét chữ nhỏ nhưng rõ khi in nhiệt */
     width: 100% !important;
   }
+
+  /* HÀNH ĐỘNG POS */
+  .bill-actions {
+    display: grid;
+    /* Chia 3 cột: Nút xóa và in nhỏ hơn một chút, nút thanh toán bự nhất */
+    grid-template-columns: 1fr 1fr 1.8fr; 
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  .bill-actions button {
+    padding: 12px 8px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+    font-size: 14px;
+  }
+
+  .bill-actions button:hover {
+    opacity: 0.85;
+  }
+
+  .btn-xoadon {
+    background: #ff4757; /* Màu đỏ nổi bật để cảnh báo */
+    color: white;
+  }
+
+  .btn-in-tam {
+    background: #747d8c;
+    color: white;
+  }
+
+  .btn-thanhtoan {
+    background: #2ecc71;
+    color: white;
+    font-size: 15px;
+  }
+
+  .txt-warning {
+    color: #e67e22;
+  }
 }

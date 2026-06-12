@@ -1,0 +1,99 @@
+<div class="food-container">
+
+    <div class="header">
+
+        <div>
+
+            <small>QUẢN LÝ MÓN ĂN</small>
+
+            <h2>Danh sách món ăn</h2>
+
+            <p>Quản lý thực đơn nhà hàng</p>
+
+        </div>
+
+        <button
+            type="button"
+            class="add-btn"
+            (click)="AddFood()">
+
+            🍽 + Thêm món
+
+        </button>
+
+    </div>
+
+    <input
+        class="search-box"
+        type="text"
+        placeholder="Tìm kiếm món ăn..."
+        [(ngModel)]="SearchText">
+
+    <div class="food-grid">
+
+        <div
+            class="food-card"
+            *ngFor="let food of FilteredFoods">
+
+            <div class="food-image">
+
+                {{ food.hinhAnh }}
+
+            </div>
+
+            <h3>
+
+                {{ food.tenMon }}
+
+            </h3>
+
+            <p>
+
+                {{ food.loaiMon }}
+
+            </p>
+
+            <div class="price">
+
+                {{ food.gia | number }} đ
+
+            </div>
+
+            <span
+                class="status"
+                [class.active]="food.trangThai"
+                [class.inactive]="!food.trangThai">
+
+                {{ food.trangThai
+                ? 'Còn bán'
+                : 'Hết món' }}
+
+            </span>
+
+            <div class="actions">
+
+                <button
+                    type="button"
+                    class="edit-btn"
+                    (click)="EditFood(food)">
+
+                    Sửa
+
+                </button>
+
+                <button
+                    type="button"
+                    class="delete-btn"
+                    (click)="DeleteFood(food)">
+
+                    Xóa
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,92 @@
+.food-container{
+    background:white;
+    border-radius:30px;
+    padding:30px;
+}
+
+.header{
+    margin-bottom:30px;
+}
+
+.food-form{
+    display:grid;
+    gap:20px;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.form-group label{
+    font-weight:600;
+    color:#374151;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select{
+    padding:15px;
+    border:1px solid #ddd;
+    border-radius:15px;
+    font-size:16px;
+    outline:none;
+    transition:0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus{
+    border-color:#6c4cf1;
+    box-shadow:0 0 0 3px rgba(108,76,241,0.1);
+}
+
+.form-group textarea{
+    min-height:120px;
+    resize:none;
+}
+
+.checkbox{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.checkbox input{
+    width:18px;
+    height:18px;
+}
+
+.actions{
+    display:flex;
+    gap:15px;
+    margin-top:20px;
+}
+
+.actions button{
+    padding:15px 30px;
+    border:none;
+    border-radius:15px;
+    cursor:pointer;
+    font-size:16px;
+    transition:0.3s;
+}
+
+.save-btn{
+    background:#6c4cf1;
+    color:white;
+}
+
+.save-btn:hover{
+    background:#5a3ee8;
+}
+
+.cancel-btn{
+    background:#fee2e2;
+    color:#dc2626;
+}
+
+.cancel-btn:hover{
+    background:#fecaca;
+}
