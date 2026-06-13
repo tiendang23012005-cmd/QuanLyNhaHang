@@ -97,10 +97,10 @@ public class PaymentController : ControllerBase
     public async Task<IActionResult> VnpayReturn()
     {
         // 1. Khai báo chính xác cổng Frontend Blazor của bạn
-        //string frontendUrl = "https://localhost:7144";
+        string frontendUrl = "https://localhost:7144";
 
         //// 2. Sài angular thì sài đường dẫn này 
-        string frontendUrl = "http://localhost:4200";
+        //string frontendUrl = "http://localhost:4200";
 
         // Kiểm tra chữ ký bảo mật
         if (!_vnPayService.ValidateSignature(Request.Query))
