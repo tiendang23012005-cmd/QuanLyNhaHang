@@ -23,6 +23,7 @@ namespace QuanLyNhaHangAPI.Controllers
             var currentYear = DateTime.Now.Year;
 
             var orders = await _context.DonHang
+                .Include(x => x.MaBanNavigation)
                 .Where(x =>
                     x.TrangThaiThanhToan != null &&
                     x.TrangThaiThanhToan.Contains("Đã thanh toán"))
@@ -34,11 +35,8 @@ namespace QuanLyNhaHangAPI.Controllers
 
                 TotalBills = orders.Count,
 
-                TotalCustomers = orders
-                    .Where(x => x.MaKhachHang != null)
-                    .Select(x => x.MaKhachHang)
-                    .Distinct()
-                    .Count()
+                TotalCustomers = orders.Sum(x =>
+                    x.MaBanNavigation?.SucChua ?? 0)
             };
 
             for (int month = 1; month <= 12; month++)
@@ -57,11 +55,8 @@ namespace QuanLyNhaHangAPI.Controllers
                     monthlyOrders.Count;
 
                 int customers =
-                    monthlyOrders
-                        .Where(x => x.MaKhachHang != null)
-                        .Select(x => x.MaKhachHang)
-                        .Distinct()
-                        .Count();
+                    monthlyOrders.Sum(x =>
+                        x.MaBanNavigation?.SucChua ?? 0);
 
                 result.MonthlyRevenue.Add(
                     new MonthlyRevenueItem
