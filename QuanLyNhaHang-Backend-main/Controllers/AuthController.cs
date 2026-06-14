@@ -69,10 +69,7 @@ namespace QuanLyNhaHangAPI.Controllers
         }
 
         #endregion
-
-        //=========================================================
         // GOOGLE LOGIN
-        //=========================================================
 
         [HttpGet("google-login")]
         public IActionResult GoogleLogin()
@@ -98,9 +95,7 @@ namespace QuanLyNhaHangAPI.Controllers
                 GoogleDefaults.AuthenticationScheme);
         }
 
-        //=========================================================
         // GOOGLE CALLBACK
-        //=========================================================
 
         [HttpGet("google-callback")]
         public async Task<IActionResult> GoogleCallback()
@@ -130,18 +125,12 @@ namespace QuanLyNhaHangAPI.Controllers
                     $"{_configuration["AppSettings:BlazorUrl"]}/login?error=no_principal");
             }
 
-            //----------------------------------------------------
-            // In toàn bộ Claim để debug
-            //----------------------------------------------------
-
             Console.WriteLine("===== CLAIM =====");
 
             foreach (var claim in principal.Claims)
             {
                 Console.WriteLine($"{claim.Type} = {claim.Value}");
             }
-
-            //----------------------------------------------------
 
             string? email =
                 principal.FindFirstValue(ClaimTypes.Email);
@@ -157,9 +146,6 @@ namespace QuanLyNhaHangAPI.Controllers
                     $"{_configuration["AppSettings:BlazorUrl"]}/login?error=no_email");
             }
 
-            //----------------------------------------------------
-            // Tạo JWT
-            //----------------------------------------------------
 
             var loginResult =
                 await _authService.GoogleLoginAsync(
@@ -174,16 +160,9 @@ namespace QuanLyNhaHangAPI.Controllers
                     $"{_configuration["AppSettings:BlazorUrl"]}/login?error=login_failed");
             }
 
-            //----------------------------------------------------
-            // Xóa Cookie Google
-            //----------------------------------------------------
 
             await HttpContext.SignOutAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme);
-
-            //----------------------------------------------------
-            // Redirect về Blazor
-            //----------------------------------------------------
 
             string token =
                 Uri.EscapeDataString(loginResult.Token!);
@@ -205,8 +184,6 @@ namespace QuanLyNhaHangAPI.Controllers
 
             return Redirect(url);
         }
-
-        // ✅ THÊM VÀO CUỐI CLASS AuthController
 
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)

@@ -212,8 +212,6 @@ namespace QuanLyNhaHangAPI.Services
                 // Bắt toàn bộ lỗi Mail giả lập, cho phép luồng ghi DB chính được thành công mượt màaaa
             }
         }
-
-        // ✅ THÊM METHOD NÀY
         public async Task<AuthResponse> GoogleLoginAsync(string email, string hoTen)
         {
             try
@@ -268,7 +266,7 @@ namespace QuanLyNhaHangAPI.Services
             }
         }
 
-        // ✅ THÊM METHOD 1: Gửi email đặt lại mật khẩu
+        //1: Gửi email đặt lại mật khẩu
         public async Task<AuthResponse> ForgotPasswordAsync(string email)
         {
             try
@@ -298,7 +296,7 @@ namespace QuanLyNhaHangAPI.Services
             }
         }
 
-        // ✅ THÊM METHOD 2: Đặt lại mật khẩu mới
+        //2: Đặt lại mật khẩu mới
         public async Task<AuthResponse> ResetPasswordAsync(ResetPasswordRequest request)
         {
             try
@@ -337,7 +335,7 @@ namespace QuanLyNhaHangAPI.Services
             }
         }
 
-        // ✅ THÊM METHOD PHỤ: Gửi email reset
+        // Gửi email reset
         private void SendResetPasswordEmail(string toEmail, string fullName, string resetLink)
         {
             try

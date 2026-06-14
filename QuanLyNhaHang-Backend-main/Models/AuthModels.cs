@@ -23,7 +23,6 @@
         public string? Role { get; set; }
     }
 
-    // ✅ THÊM 2 CLASS NÀY
     public class ForgotPasswordRequest
     {
         public string Email { get; set; } = null!;

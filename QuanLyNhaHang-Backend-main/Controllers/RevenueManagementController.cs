@@ -26,7 +26,9 @@ namespace QuanLyNhaHangAPI.Controllers
                 .Include(x => x.MaBanNavigation)
                 .Where(x =>
                     x.TrangThaiThanhToan != null &&
-                    x.TrangThaiThanhToan.Contains("Đã thanh toán"))
+                    x.TrangThaiThanhToan.Contains("Đã thanh toán") &&
+                    x.NgayTao.HasValue &&
+                    x.NgayTao.Value.Year == currentYear)
                 .ToListAsync();
 
             var result = new RevenueSummaryDto
@@ -36,7 +38,9 @@ namespace QuanLyNhaHangAPI.Controllers
                 TotalBills = orders.Count,
 
                 TotalCustomers = orders.Sum(x =>
-                    x.MaBanNavigation?.SucChua ?? 0)
+                    x.MaBanNavigation?.SucChua ?? 0),
+
+                YearlyTarget = 500000000
             };
 
             for (int month = 1; month <= 12; month++)

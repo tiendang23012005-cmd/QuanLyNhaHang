@@ -18,11 +18,8 @@ namespace QuanLyNhaHangAPI
 
             var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
 
-            Console.WriteLine("=================================");
             Console.WriteLine(connStr);
-            Console.WriteLine("=================================");
 
-            // ✅ THÊM trước builder.Build()
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {
@@ -46,7 +43,7 @@ namespace QuanLyNhaHangAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            //================ JWT + GOOGLE ===================
+            //WT + GOOGLE 
 
             var jwtKey = builder.Configuration["Jwt:Key"]!;
 
@@ -110,10 +107,7 @@ namespace QuanLyNhaHangAPI
                 options.Scope.Add("email");
                 options.Scope.Add("profile");
             });
-
-            // =========================================================================
-            // SỬA TẠI ĐÂY: Gộp chung các domain Frontend vào 1 chính sách CORS duy nhất
-            // =========================================================================
+            // Gộp chung các domain Frontend vào 1 chính sách CORS duy nhất
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowFrontends", policy =>
@@ -125,7 +119,7 @@ namespace QuanLyNhaHangAPI
                           )
                           .AllowAnyHeader()
                           .AllowAnyMethod()
-                          .AllowCredentials(); // Bắt buộc nếu bạn dùng Cookie hoặc xác thực nâng cao qua CORS
+                          .AllowCredentials();
                 });
             });
 
@@ -140,35 +134,17 @@ namespace QuanLyNhaHangAPI
                 app.UseSwaggerUI();
             }
 
-            // =========================================================================
-            // SỬA TẠI ĐÂY: Chỉ gọi UseCors MỘT LẦN duy nhất với chính sách chung
-            // =========================================================================        
+            // Chỉ gọi UseCors MỘT LẦN duy nhất với chính sách chung      
             app.UseHttpsRedirection();
 
             app.UseCors("AllowFrontends");
 
             app.UseSession();
 
-            // Lưu ý: Thứ tự chuẩn là UseCors -> UseAuthentication -> UseAuthorization
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
-
-            // Đoạn code Hash lại mật khẩu tự động của bạn giữ nguyên
-            using (var scope = app.Services.CreateScope())
-            {
-                var context = scope.ServiceProvider.GetRequiredService<QuanLyNhaHangDbContext>();
-                var users = context.NguoiDung.ToList();
-                foreach (var user in users)
-                {
-                    if (!user.MatKhau.StartsWith("$2"))
-                    {
-                        user.MatKhau = BCrypt.Net.BCrypt.HashPassword(user.MatKhau);
-                    }
-                }
-                context.SaveChanges();
-            }
 
             app.Run();
         }

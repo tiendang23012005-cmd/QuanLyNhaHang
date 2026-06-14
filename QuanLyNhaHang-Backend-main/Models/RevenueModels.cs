@@ -8,7 +8,7 @@
 
         public int TotalCustomers { get; set; }
 
-        public decimal MonthlyTarget { get; set; } = 100000000;
+        public decimal YearlyTarget { get; set; } = 500000000;
 
         public List<MonthlyRevenueItem> MonthlyRevenue { get; set; } = new();
 

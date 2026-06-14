@@ -10,7 +10,6 @@ namespace QuanLyNhaHangAPI.Services
 
         Task<AuthResponse> GoogleLoginAsync(string email, string hoTen);
 
-        // ✅ THÊM 2 DÒNG NÀY
         Task<AuthResponse> ForgotPasswordAsync(string email);
         Task<AuthResponse> ResetPasswordAsync(ResetPasswordRequest request);
     }
