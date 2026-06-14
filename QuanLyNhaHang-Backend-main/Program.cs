@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using QuanLyNhaHangAPI.Data;
 using QuanLyNhaHangAPI.Services;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace QuanLyNhaHangAPI
 {
@@ -20,7 +22,15 @@ namespace QuanLyNhaHangAPI
             Console.WriteLine(connStr);
             Console.WriteLine("=================================");
 
-
+            // ✅ THÊM trước builder.Build()
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            });
 
             // 1. Cấu hình kết nối SQL Server Database
             builder.Services.AddDbContext<QuanLyNhaHangDbContext>(options =>
@@ -33,13 +43,34 @@ namespace QuanLyNhaHangAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // 3. Cấu hình bảo mật JWT Bearer Authentication Middleware
-            var jwtKey = builder.Configuration["Jwt:Key"] ?? "Key_Bao_Mat_Sieu_Cap_Nha_Hang_Quan_Ly_123456789";
-            builder.Services.AddAuthentication(options =>
+            //================ JWT + GOOGLE ===================
+
+            var jwtKey = builder.Configuration["Jwt:Key"]!;
+
+            builder.Services
+            .AddAuthentication(options =>
             {
+                // API sử dụng JWT
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+                // Google sẽ lưu thông tin đăng nhập tạm bằng Cookie
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
+
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+            {
+                options.Cookie.Name = "GoogleAuth";
+
+                options.Cookie.HttpOnly = true;
+
+                options.Cookie.SameSite = SameSiteMode.Lax;
+
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+            })
+
             .AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -48,10 +79,33 @@ namespace QuanLyNhaHangAPI
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? "NhaHangIssuer",
-                    ValidAudience = builder.Configuration["Jwt:Audience"] ?? "NhaHangAudience",
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
                 };
+            })
+
+            .AddGoogle(options =>
+            {
+                options.ClientId =
+                    builder.Configuration["Google:ClientId"];
+
+                options.ClientSecret =
+                    builder.Configuration["Google:ClientSecret"];
+
+                options.CallbackPath = "/signin-google";
+
+                options.SignInScheme =
+                    CookieAuthenticationDefaults.AuthenticationScheme;
+
+                options.SaveTokens = true;
+
+                options.Scope.Add("email");
+                options.Scope.Add("profile");
             });
 
             // =========================================================================
@@ -85,10 +139,12 @@ namespace QuanLyNhaHangAPI
 
             // =========================================================================
             // SỬA TẠI ĐÂY: Chỉ gọi UseCors MỘT LẦN duy nhất với chính sách chung
-            // =========================================================================
+            // =========================================================================        
+            app.UseHttpsRedirection();
+
             app.UseCors("AllowFrontends");
 
-            app.UseHttpsRedirection();
+            app.UseSession();
 
             // Lưu ý: Thứ tự chuẩn là UseCors -> UseAuthentication -> UseAuthorization
             app.UseAuthentication();

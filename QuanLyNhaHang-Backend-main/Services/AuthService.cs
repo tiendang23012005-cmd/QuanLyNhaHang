@@ -212,6 +212,61 @@ namespace QuanLyNhaHangAPI.Services
                 // Bắt toàn bộ lỗi Mail giả lập, cho phép luồng ghi DB chính được thành công mượt màaaa
             }
         }
-        
+
+        // ✅ THÊM METHOD NÀY
+        public async Task<AuthResponse> GoogleLoginAsync(string email, string hoTen)
+        {
+            try
+            {
+                // Tìm user theo email Google
+                var user = await _context.NguoiDung
+                    .Include(u => u.MaVaiTroNavigation)
+                    .FirstOrDefaultAsync(u => u.Email == email);
+
+                if (user == null)
+                {
+                    // Tự động tạo tài khoản mới nếu chưa có
+                    var vaiTroKhach = await _context.VaiTro.FirstOrDefaultAsync(r => r.TenVaiTro == "Khách hàng");
+                    int maVaiTro = vaiTroKhach?.MaVaiTro ?? 5;
+
+                    user = new NguoiDung
+                    {
+                        MaVaiTro = maVaiTro,
+                        HoTen = hoTen,
+                        Email = email,
+                        MatKhau = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString()), // Mật khẩu ngẫu nhiên
+                        TrangThaiHoatDong = true,
+                        NgayTao = DateTime.Now
+                    };
+
+                    await _context.NguoiDung.AddAsync(user);
+                    await _context.SaveChangesAsync();
+
+                    // Load lại navigation property
+                    user = await _context.NguoiDung
+                        .Include(u => u.MaVaiTroNavigation)
+                        .FirstAsync(u => u.Email == email);
+                }
+
+                if (user.TrangThaiHoatDong == false)
+                    return new AuthResponse { IsSuccess = false, Message = "Tài khoản đã bị khóa!" };
+
+                string token = GenerateJwtToken(user);
+
+                return new AuthResponse
+                {
+                    IsSuccess = true,
+                    Message = "Đăng nhập Google thành công!",
+                    Token = token,
+                    FullName = user.HoTen,
+                    Role = user.MaVaiTroNavigation?.TenVaiTro ?? "Khách hàng"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new AuthResponse { IsSuccess = false, Message = $"Lỗi đăng nhập Google: {ex.Message}" };
+            }
+        }
+
     }
 }
