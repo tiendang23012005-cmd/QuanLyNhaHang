@@ -206,5 +206,23 @@ namespace QuanLyNhaHangAPI.Controllers
             return Redirect(url);
         }
 
+        // ✅ THÊM VÀO CUỐI CLASS AuthController
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+        {
+            var result = await _authService.ForgotPasswordAsync(request.Email);
+            return Ok(result);
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            var result = await _authService.ResetPasswordAsync(request);
+            if (!result.IsSuccess)
+                return BadRequest(result);
+            return Ok(result);
+        }
+
     }
 }

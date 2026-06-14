@@ -268,5 +268,124 @@ namespace QuanLyNhaHangAPI.Services
             }
         }
 
+        // ✅ THÊM METHOD 1: Gửi email đặt lại mật khẩu
+        public async Task<AuthResponse> ForgotPasswordAsync(string email)
+        {
+            try
+            {
+                var user = await _context.NguoiDung
+                    .FirstOrDefaultAsync(u => u.Email == email);
+
+                // Luôn trả về thành công để tránh lộ thông tin email tồn tại hay không
+                if (user == null)
+                    return new AuthResponse { IsSuccess = true, Message = "Nếu email tồn tại, bạn sẽ nhận được link đặt lại mật khẩu." };
+
+                // Tạo token reset (kết hợp email + timestamp để có hạn dùng)
+                string rawToken = $"{email}|{DateTime.UtcNow.AddMinutes(30):yyyy-MM-ddTHH:mm:ss}";
+                string resetToken = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(rawToken));
+
+                // Gửi email
+                string blazorUrl = _config["AppSettings:BlazorUrl"] ?? "https://localhost:7144";
+                string resetLink = $"{blazorUrl}/reset-password?email={Uri.EscapeDataString(email)}&token={Uri.EscapeDataString(resetToken)}";
+
+                SendResetPasswordEmail(email, user.HoTen, resetLink);
+
+                return new AuthResponse { IsSuccess = true, Message = "Nếu email tồn tại, bạn sẽ nhận được link đặt lại mật khẩu." };
+            }
+            catch (Exception ex)
+            {
+                return new AuthResponse { IsSuccess = false, Message = $"Lỗi hệ thống: {ex.Message}" };
+            }
+        }
+
+        // ✅ THÊM METHOD 2: Đặt lại mật khẩu mới
+        public async Task<AuthResponse> ResetPasswordAsync(ResetPasswordRequest request)
+        {
+            try
+            {
+                // Giải mã token
+                string rawToken = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(request.Token));
+                var parts = rawToken.Split('|');
+                if (parts.Length != 2)
+                    return new AuthResponse { IsSuccess = false, Message = "Link không hợp lệ." };
+
+                string tokenEmail = parts[0];
+                if (!DateTime.TryParse(parts[1], out DateTime expiry))
+                    return new AuthResponse { IsSuccess = false, Message = "Link không hợp lệ." };
+
+                // Kiểm tra email khớp
+                if (tokenEmail != request.Email)
+                    return new AuthResponse { IsSuccess = false, Message = "Link không hợp lệ." };
+
+                // Kiểm tra hết hạn (30 phút)
+                if (DateTime.UtcNow > expiry)
+                    return new AuthResponse { IsSuccess = false, Message = "Link đã hết hạn. Vui lòng yêu cầu lại." };
+
+                // Tìm user và cập nhật mật khẩu
+                var user = await _context.NguoiDung.FirstOrDefaultAsync(u => u.Email == request.Email);
+                if (user == null)
+                    return new AuthResponse { IsSuccess = false, Message = "Tài khoản không tồn tại." };
+
+                user.MatKhau = BCrypt.Net.BCrypt.HashPassword(request.MatKhauMoi);
+                await _context.SaveChangesAsync();
+
+                return new AuthResponse { IsSuccess = true, Message = "Đặt lại mật khẩu thành công! Vui lòng đăng nhập." };
+            }
+            catch (Exception ex)
+            {
+                return new AuthResponse { IsSuccess = false, Message = $"Lỗi: {ex.Message}" };
+            }
+        }
+
+        // ✅ THÊM METHOD PHỤ: Gửi email reset
+        private void SendResetPasswordEmail(string toEmail, string fullName, string resetLink)
+        {
+            try
+            {
+                var emailSettings = _config.GetSection("EmailSettings");
+                var fromAddress = new System.Net.Mail.MailAddress(
+                    emailSettings["FromEmail"]!, emailSettings["FromName"]);
+                var toAddress = new System.Net.Mail.MailAddress(toEmail, fullName);
+
+                using var smtp = new System.Net.Mail.SmtpClient
+                {
+                    Host = emailSettings["SmtpHost"]!,
+                    Port = int.Parse(emailSettings["SmtpPort"]!),
+                    EnableSsl = true,
+                    DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new System.Net.NetworkCredential(
+                        emailSettings["SmtpUser"],
+                        emailSettings["SmtpPassword"]),
+                    Timeout = 10000
+                };
+
+                using var message = new System.Net.Mail.MailMessage(fromAddress, toAddress)
+                {
+                    Subject = "[Nhà Hàng] - Đặt lại mật khẩu",
+                    Body = $@"
+                <div style='font-family:Arial,sans-serif;max-width:500px;margin:auto'>
+                    <h2 style='color:#f59e0b'>🍽️ Quản Lý Nhà Hàng</h2>
+                    <p>Xin chào <strong>{fullName}</strong>,</p>
+                    <p>Bạn vừa yêu cầu đặt lại mật khẩu. Nhấn vào nút bên dưới để tiếp tục:</p>
+                    <div style='text-align:center;margin:30px 0'>
+                        <a href='{resetLink}'
+                           style='background:#f59e0b;color:white;padding:12px 30px;border-radius:6px;text-decoration:none;font-weight:bold'>
+                            ĐẶT LẠI MẬT KHẨU
+                        </a>
+                    </div>
+                    <p style='color:#6b7280;font-size:13px'>Link có hiệu lực trong <strong>30 phút</strong>. Nếu bạn không yêu cầu, hãy bỏ qua email này.</p>
+                </div>",
+                    IsBodyHtml = true
+                };
+
+                smtp.Send(message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi gửi email: {ex.Message}");
+            }
+        }
+
     }
 }

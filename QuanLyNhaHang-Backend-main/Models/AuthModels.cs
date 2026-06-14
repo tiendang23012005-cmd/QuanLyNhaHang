@@ -23,5 +23,18 @@
         public string? Role { get; set; }
     }
 
+    // ✅ THÊM 2 CLASS NÀY
+    public class ForgotPasswordRequest
+    {
+        public string Email { get; set; } = null!;
+    }
+
+    public class ResetPasswordRequest
+    {
+        public string Email { get; set; } = null!;
+        public string Token { get; set; } = null!;
+        public string MatKhauMoi { get; set; } = null!;
+    }
+
 
 }

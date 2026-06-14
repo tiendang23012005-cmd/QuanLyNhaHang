@@ -23,15 +23,14 @@ namespace QuanLyNhaHangAPI.Controllers
         public async Task<IActionResult> GetUsers()
         {
             var users = await _context.NguoiDung
-                .Include(x => x.MaVaiTroNavigation)
                 .Select(x => new
                 {
-                    x.MaNguoiDung,
-                    x.HoTen,
-                    x.Email,
-                    x.DienThoai,
-                    VaiTro = x.MaVaiTroNavigation.TenVaiTro,
-                    x.TrangThaiHoatDong
+                    maNguoiDung = x.MaNguoiDung,
+                    hoTen = x.HoTen,
+                    email = x.Email,
+                    dienThoai = x.DienThoai,
+                    maVaiTro = x.MaVaiTro,
+                    trangThaiHoatDong = x.TrangThaiHoatDong ?? false
                 })
                 .ToListAsync();
 
@@ -47,6 +46,7 @@ namespace QuanLyNhaHangAPI.Controllers
                 .Where(x => x.MaNguoiDung == id)
                 .Select(x => new
                 {
+                    maNguoiDung = x.MaNguoiDung,
                     hoTen = x.HoTen,
                     email = x.Email,
                     dienThoai = x.DienThoai,
