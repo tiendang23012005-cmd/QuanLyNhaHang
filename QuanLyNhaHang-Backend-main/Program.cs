@@ -38,6 +38,9 @@ namespace QuanLyNhaHangAPI
 
             // 2. Kích hoạt Dependency Injection cho AuthService
             builder.Services.AddScoped<IAuthService, AuthService>();
+            // 2.1. Kích hoạt Dependency Injection cho CloudinaryService (upload ảnh lên cloud)
+            builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
+
             builder.Services.AddScoped<VNPayService>();
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
