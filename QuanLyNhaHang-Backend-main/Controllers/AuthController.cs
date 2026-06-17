@@ -74,7 +74,7 @@ namespace QuanLyNhaHangAPI.Controllers
         [HttpGet("google-login")]
         public IActionResult GoogleLogin()
         {
-            Console.WriteLine("===== GOOGLE LOGIN =====");
+            Console.WriteLine(" GOOGLE LOGIN ");
 
             var redirectUrl = Url.Action(
                 nameof(GoogleCallback),
@@ -98,92 +98,35 @@ namespace QuanLyNhaHangAPI.Controllers
         // GOOGLE CALLBACK
 
         [HttpGet("google-callback")]
-        public async Task<IActionResult> GoogleCallback()
-        {
-            Console.WriteLine("===== GOOGLE CALLBACK =====");
+public async Task<IActionResult> GoogleCallback()
+{
+    // Lấy thông tin từ Google
+    var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
 
-            var authenticateResult =
-                await HttpContext.AuthenticateAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme);
+    // 🔴 SỬA: Đổi BlazorUrl thành AngularUrl khi lỗi
+    if (!result.Succeeded)
+        return Redirect($"{_configuration["AppSettings:AngularUrl"]}/login?error=google_failed");
 
-            Console.WriteLine(
-                $"Authenticate Success : {authenticateResult.Succeeded}");
+    var email = result.Principal?.FindFirstValue(ClaimTypes.Email);
+    var hoTen = result.Principal?.FindFirstValue(ClaimTypes.Name);
 
-            if (!authenticateResult.Succeeded)
-            {
-                Console.WriteLine("Không lấy được Cookie.");
+    if (string.IsNullOrEmpty(email))
+        return Redirect($"{_configuration["AppSettings:AngularUrl"]}/login?error=no_email");
 
-                return Redirect(
-                    $"{_configuration["AppSettings:BlazorUrl"]}/login?error=google_failed");
-            }
+    // Gọi service xử lý tạo/lấy user và tạo JWT
+    var authResult = await _authService.GoogleLoginAsync(email, hoTen ?? email);
 
-            ClaimsPrincipal? principal = authenticateResult.Principal;
+    if (!authResult.IsSuccess)
+        return Redirect($"{_configuration["AppSettings:AngularUrl"]}/login?error=login_failed");
 
-            if (principal == null)
-            {
-                return Redirect(
-                    $"{_configuration["AppSettings:BlazorUrl"]}/login?error=no_principal");
-            }
+    // Encode token để truyền qua URL an toàn
+    var encodedToken = Uri.EscapeDataString(authResult.Token!);
+    var encodedName = Uri.EscapeDataString(authResult.FullName ?? "");
+    var encodedRole = Uri.EscapeDataString(authResult.Role ?? "Khách hàng");
 
-            Console.WriteLine("===== CLAIM =====");
-
-            foreach (var claim in principal.Claims)
-            {
-                Console.WriteLine($"{claim.Type} = {claim.Value}");
-            }
-
-            string? email =
-                principal.FindFirstValue(ClaimTypes.Email);
-
-            string? fullName =
-                principal.FindFirstValue(ClaimTypes.Name);
-
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                Console.WriteLine("Email NULL");
-
-                return Redirect(
-                    $"{_configuration["AppSettings:BlazorUrl"]}/login?error=no_email");
-            }
-
-
-            var loginResult =
-                await _authService.GoogleLoginAsync(
-                    email,
-                    fullName ?? email);
-
-            if (!loginResult.IsSuccess)
-            {
-                Console.WriteLine(loginResult.Message);
-
-                return Redirect(
-                    $"{_configuration["AppSettings:BlazorUrl"]}/login?error=login_failed");
-            }
-
-
-            await HttpContext.SignOutAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme);
-
-            string token =
-                Uri.EscapeDataString(loginResult.Token!);
-
-            string name =
-                Uri.EscapeDataString(loginResult.FullName ?? "");
-
-            string role =
-                Uri.EscapeDataString(loginResult.Role ?? "");
-
-            string url =
-                $"{_configuration["AppSettings:BlazorUrl"]}" +
-                $"/auth/google-result" +
-                $"?token={token}" +
-                $"&name={name}" +
-                $"&role={role}";
-
-            Console.WriteLine(url);
-
-            return Redirect(url);
-        }
+    // 🔴 SỬA: Redirect về Angular kèm JWT token thay vì Blazor
+    return Redirect($"{_configuration["AppSettings:AngularUrl"]}/auth/google-result?token={encodedToken}&name={encodedName}&role={encodedRole}");
+}
 
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)

@@ -283,8 +283,8 @@ namespace QuanLyNhaHangAPI.Services
                 string resetToken = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(rawToken));
 
                 // Gửi email
-                string blazorUrl = _config["AppSettings:BlazorUrl"] ?? "https://localhost:7144";
-                string resetLink = $"{blazorUrl}/reset-password?email={Uri.EscapeDataString(email)}&token={Uri.EscapeDataString(resetToken)}";
+                string angularUrl = _config["AppSettings:AngularUrl"] ?? "http://localhost:4200";
+                string resetLink = $"{angularUrl}/reset-password?email={Uri.EscapeDataString(email)}&token={Uri.EscapeDataString(resetToken)}";
 
                 SendResetPasswordEmail(email, user.HoTen, resetLink);
 
